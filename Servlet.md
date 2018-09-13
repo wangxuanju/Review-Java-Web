@@ -35,16 +35,16 @@ public class Helloworld extends HttpServlet{
     <!--定义Servlet本身的属性-->
     <servlet>
         <!--指定Servlet的名称-->
-        <servlet-name>Helloworld</servlet-name>
+        <servlet-name>Helloworld</servlet-name>                                      //标签表示的是Servlet名；
         <!--指定Servlet类的全名-->
-        <servlet-class>chapter4.Helloworld</servlet-class>
+        <servlet-class>chapter4.Helloworld</servlet-class>                           //表示的是Servlet类的全名
     </servlet>
     <!--定义Servlet映射信息-->
     <servlet-mapping>
         <!--指定Servlet名-->
         <servlet-name>Helloworld</servlet-name>
         <!--指定在浏览器中访问的Servlet的URL-->
-        <url-pattern>/servlet/helloworld</url-pattern>
+        <url-pattern>/servlet/helloworld</url-pattern>                              //标签表示的是在浏览器中访问当前Servlet的URL
     </servlet-mapping>
     <!--配置欢迎页-->
     <welcome-file-list>
@@ -52,10 +52,21 @@ public class Helloworld extends HttpServlet{
         <welcom-file>index.jsp</welcom-file>
     </welcom-file-list>
 </web-app>
-?
 ```
 
 # 二、学习Servlet技术
+## 配置Tomcat7服务器的数据库连接池
+Tomcat服务器提供了一种数据库连接优化的技术——数据库连接技术。数据库连接池负责分配、管理和释放数据库连接，它允许应用程序使用一个现有的数据库连接，而不是重新建立一个数据库连接。
+在Tomcat中配置数据库连接有两种形式：配置全局数据库连接和配置局部数据库连接。
+```java
+<Resource name = "jdbc/webdb" auth="Container"
+    type="javax.sql.DataSource"
+    <!--指定MySql的JDBC驱动类名-->
+    
+
+
+
+```
 
 
 # 三、掌握HttpServletResponse类
