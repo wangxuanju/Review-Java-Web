@@ -307,7 +307,7 @@ public class TestPrintWriter extends HttpSErvlet{
     }
 }
 ```
-# 实例：输出字节流响应消息——ServletOutputStream类
+## 实例：输出字节流响应消息——ServletOutputStream类
 如果想要向客户端输出文本信息，使用PrintWriter类；但向客户端输出字节消息，如图像、视频文件等，就必须使用ServletOutputStream类。可以通过HttpServletResponse类的getOutputStream方法获得ServletOutStream对象实例。
 ```java  //ShowImage类演示了如何使用ServletStream方法获得ServletOutputStream对象在客户端浏览器中显示图像
 public class ShowImag extends HttpServlet{
@@ -341,7 +341,7 @@ ShowImage类使用了请求参数name来获得客户端指定的图像绝对路�
 
 getWrier方法和getOutputStream方法不能同时使用。
 
-# 实例：包含Web资源——RequestDispatcher.include方法
+## 实例：包含Web资源——RequestDispatcher.include方法
 
 # 三、掌握HttpServletResponse类
 
