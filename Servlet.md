@@ -58,15 +58,79 @@ public class Helloworld extends HttpServlet{
 ## 配置Tomcat7服务器的数据库连接池
 Tomcat服务器提供了一种数据库连接优化的技术——数据库连接技术。数据库连接池负责分配、管理和释放数据库连接，它允许应用程序使用一个现有的数据库连接，而不是重新建立一个数据库连接。
 在Tomcat中配置数据库连接有两种形式：配置全局数据库连接和配置局部数据库连接。
-```java
-<Resource name = "jdbc/webdb" auth="Container"
-    type="javax.sql.DataSource"
+```java          //配置全局数据库
+<Resource name = "jdbc/webdb" auth="Container"                //name:设置数据源名称，通常有“jdbc/xxx”格式 //auth:设置数据源的管理者
+    type="javax.sql.DataSource"                               //type:设置数据源的管理者，其有两个可选择Container和Application.
     <!--指定MySql的JDBC驱动类名-->
+    driverClassName="com.mysql.jdbc.Driver"
+    <!--指定连接字符串-->
+    url="jdbc:mysql://localhost:3306/webdb?characterEncoding=utf-8"
+    <!--指定用户名-->
+    username="root"
+    <!--指定密码-->
+    password="1234"
+    maxActive="200"                                         //maxActive:连接池可以存储的最大连接数
+    maxIdle="50"                                            //maxIdle:最大空闲连接数
+    maxWait="3000"/>                                        //maxWait:暂时无法获得数据库连接的等待时间
+```
+```java       //配置局部数据库
+<Context path="/webdemo" docBase="webdemo" debug="0"> //注意配置全局和局部变量Resource来面的代码一样！！！
+     <Resorce name="jdbc/webdb" auto="container"
+         type="javax.sql.DataSource"                              
+         <!--指定MySql的JDBC驱动类名-->
+         driverClassName="com.mysql.jdbc.Driver"
+         <!--指定连接字符串-->
+         url="jdbc:mysql://localhost:3306/webdb?characterEncoding=utf-8"
+         <!--指定用户名-->
+         username="root"
+         <!--指定密码-->
+         password="1234"
+         maxActive="200"                                         
+         maxIdle="50"                                            
+         maxWait="3000"/>  
+</Context>
+```
+
+## 实例：通过数据库连接池连接MySQL数据库
+```java
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class ViewDictionary extends HttpServlet{
+    //处理客户端的GET请求
+    public void doGet(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置HTTP响应头的Content-Type字段值
+        rsponse.setContentType("text/html;charset=UTF-8");
+        //获得用于输出消息的PrintWriter对象,获取字符输出流
+        PrintWriter out = response.getWriter();
+        try{
+        
+        
+        
+        
+        
+        
+        }
     
+    
+    }
+
+
+
+
 
 
 
 ```
+
+
+
 
 
 # 三、掌握HttpServletResponse类
