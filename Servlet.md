@@ -140,10 +140,64 @@ public class ViewDictionary extends HttpServlet{
   }
 }
 ```
-
-
-
-
+## 实例：处理客户端HTTP GET请求——doGet方法
+doGet方法可以处理HTTP GET请求，doGet方法的定义如下：
+protected void doGet(HttpServletRequest req,HttpServletResponse resp)thorws ServletException,IOException
+```java
+public class TestDoGet extends HttpServlet{
+    //处理客户端的GET请求
+    protected void doGet(HttpServletRequest request,HttpServletResponse response)thorws ServletException,IOException{
+        response.setContentType("text/html;charset=UTF-8");//设置Context-Type字段
+        PrintWriter out = response.getWriter();//获得PrintWriter对象
+        out.println("处理HTTP GET请求");//向客户端输出消息
+    }
+}
+```
+```java         //TestDoGet类的配置代码
+<!--定义Servlet的名称：TestDoGet-->
+<servlet>
+    <servlet-name>TestDoGet</servlet-name>
+    <servlet-class>chapter4.TestDoGet</servlet-class>
+</servlet>
+<!--指定Servlet的映射路径-->
+<servlet-maping>
+    <servlet-name>TestDoGet</servlet-name>
+    <url-pattern>/servlet/TestDoGet</url-pattern>
+</srvlet-maping>
+```
+## 处理客户端HTTP POST请求——doPost方法
+doPost方法用来处理客户端的HTTP POST请求；doPost方法的定义如下：
+protected void doPost(HttpServletRequest req,HttpServletResponse resp)thorws ServletException,IOException)
+```java
+public class TestDoPost extends HttpServlet{
+    //处理客户端的POST请求
+    protected void doPosst(HttpServletRequest request,HttpServletResponse response)thorws ServletException,IOException{
+        response.setContentType("text/html;charset=UTF-8");//设置Context-Type字段
+        PrintWriter out = response.getWriter();//获得PrintWriter对象
+        out.println("处理HTTP POST请求");//向客户端输出消息
+    }
+}
+```
+```java         //TestDoPost类的配置代码
+<!--定义Servlet的名称：TestDoPost-->
+<servlet>
+    <servlet-name>TestDoPost</servlet-name>
+    <servlet-class>chapter4.TestDoPost</servlet-class>
+</servlet>
+<!--指定Servlet的映射路径-->
+<servlet-maping>
+    <servlet-name>TestDoPost</servlet-name>
+    <url-pattern>/servlet/TestDoPost</url-pattern>
+</srvlet-maping>
+```
+为了正确的显示出TestDoPost类的输出文本——处理HTTP POST请求，需要创建访问页面，具体html代码如下：
+```java
+<!--使用<form>通过post方法访问TestDoPost-->
+<form action=".../servlet/TestDoPost" method="post">
+    <input type="text" name="name"/><p/>
+    <input type="submit" value="提交"/>
+</form>
+```
 
 # 三、掌握HttpServletResponse类
 
