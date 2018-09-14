@@ -284,7 +284,64 @@ TestInitDestory类的配置代码如下：
 </servlet-mapping>
 ```
 ## 实例：输出字符流响应消息——PrintWriter类
+前面的例子均使用PrintWriter对象向客户端输出信息；通过HttpServletResponse类的getWriter方法获得PrintWriter类的对象实例，具体使用时注意：
 
+（1）当通过HttpServletResponse类的getWriter方法获取PrintWriter类对象之前，需要使用setContendType方法设置Content-Type字段值。
+
+（2）HttpServletResponse类的addHeader和setHeader方法用来进行相应头的设置，可以在调用getWriter方法前后被调用。
+
+（3）虽然可以使用addHeader和setHeader方法在调用getWriter方法后设置Contend-Type字段的值，如果在调用getWriter方法之前使用setContendType方法设置相应消息的字段集编码，在客户端浏览器中的中文信息仍然会显示"?"乱码。
+```java   //TestPrintWriter类演示如何使用PrintWriter对象向客户端输出信息
+public class TestPrintWriter extends HttpSErvlet{
+    //覆盖service方法
+    @Override
+    protected void service(HttpSErvletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        response.setHeader("myhead1","value1");           //添加一个新的HTTP头
+        PrintWriter out = response.getWriter();
+        
+        response.setContendType("text/html;charset=utf-8");//设置响应消息头必须在调用getWriter方法之前进行（这样会产生乱码）
+        
+        response.setHeader("Contend-Type","text/html;charset=utf-8");//虽然可以成功设置Contend-Type字段的值，但输出却是“?”
+        response.setHeader("myhead2”,"value2");//这条语句时有效的
+        out.println("<b>响应消息</b>");        //向客户端输出消息   
+    }
+}
+```
+# 实例：输出字节流响应消息——ServletOutputStream类
+如果想要向客户端输出文本信息，使用PrintWriter类；但向客户端输出字节消息，如图像、视频文件等，就必须使用ServletOutputStream类。可以通过HttpServletResponse类的getOutputStream方法获得ServletOutStream对象实例。
+```java  //ShowImage类演示了如何使用ServletStream方法获得ServletOutputStream对象在客户端浏览器中显示图像
+public class ShowImag extends HttpServlet{
+    @Override
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置响应消息的类型为图像
+        response.setContendType("image/jpeg");
+        //获得SevletOutStream对象
+        OutputStream os = response.getOutputStream();
+        byte[] buffer = new byte[8192];//每次从文件输入流中读取8k字节
+        //获得name请求参数所指定的图像绝对路径
+        String imageName = request.getParameter("name");
+        //获取图像文件的输入流
+        FileInputStream fis = new FileInputStream(imageName);
+        int count = 0;
+        //通过循环读取并传送name所指定的图像数据
+        while(true){
+            count = fis.read(buffer);//将字节读到buffer缓冲区
+            //当文件输入流中的字节读完后，退出while循环
+            if(count<=0)
+                break;
+            os.writer(buffer,0,count);
+        }
+        fis.close();
+    }
+}
+```
+在显示图像时，必须将Contend-Type字段值设为"image/jpeg";
+
+ShowImage类使用了请求参数name来获得客户端指定的图像绝对路径；也可以使用相对路径，使用ServleContext接口的getRealPath方法将相对路径转换为绝对路径。
+
+getWrier方法和getOutputStream方法不能同时使用。
+
+# 实例：包含Web资源——RequestDispatcher.include方法
 
 # 三、掌握HttpServletResponse类
 
