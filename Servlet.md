@@ -198,6 +198,35 @@ public class TestDoPost extends HttpServlet{
     <input type="submit" value="提交"/>
 </form>
 ```
+## 实例：处理客户端各种请求——service方法
+如果要同时处理HTTP GET 和HTTP POST请求，就必须在Servlet类中包含doGet方法和doPost方法，并且在其中一个方法编写实际的代码，而在另外一个方法中只需要简单的调用另一个方法就可以；
+```java
+public class TestGetAndPost extends HttpServlet{
+    //处理客户端的GET请求
+    protected void doGet(HttpServletRequest request,HttpServletResponse response)thorws ServletException,IOException{
+        //编写实际的代码
+    }
+    //处理客服端的POST请求
+    protected void doPosst(HttpServletRequest request,HttpServletResponse response)thorws ServletException,IOException{
+        //处理代码和doGet一样，需要调用doGet方法
+        doGet(request,response);
+    }
+}
+```
+可以通过覆盖HttpSrvlet类的service方法来使代码更简洁。当具体执行HttpServlet类的service方法时，会根据HTTP协议的请求方式调用不同的doXXX方法，例如如果为HTTP Get请求则调用doGet方法；如果为HTTP POST请求则调用doPost方法。
+```java
+//HttpServlet类中的service方法
+protected void service(HttpServletRequest req,HttpServletResponse resp) throws ServletException,IOException{
+    String 
+
+}
+
+
+
+```
+
+
+
 
 # 三、掌握HttpServletResponse类
 
