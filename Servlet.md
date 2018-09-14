@@ -110,23 +110,35 @@ public class ViewDictionary extends HttpServlet{
         //获得用于输出消息的PrintWriter对象,获取字符输出流
         PrintWriter out = response.getWriter();
         try{
-        
-        
-        
-        
-        
-        
+        //获得Context对象实例
+        javax.naming.Context ctx = new javax.naming.InitialContext();
+        //根据webdb数据源获得DataSource对象              //要从数据源中获得连接对象，需要使用javax.naming.Context的lookup方法。
+        javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup("java:/comp/env/jdbc/webdb");
+        //获得Connection对象
+        Connection conn = ds.getConnection();
+        //根据Selection语句建立一个PreparedStatement对象实例
+        PreparedStatement pstmt = conns.prepareStatement("SELECTION * FROM   t_dictionary");
+        //执行SQL语句
+        ResultSet rs = pstmt.executeQuery();
+        StringBuilder table = new  StirngBuilder();
+        //添加<table>标签的HTML代码
+        table.append("<table border="1">);
+        table.append("<tr><td>书名</td><td>价格</td></tr>");
+        //生成查询结果
+        while(rs.next()){
+            //添加<table>标签的HTML代码
+            table.append("<tr><td>"+rs.getString("english")+"</td><td>");
+            table.append(rs.getString("chinese")+"</td></tr>");
         }
-    
-    
+        table.append("</table");
+        out.println(table.toStirng());//输出查询结果
+        pstm.close();         //关闭PreparedStatement对象
     }
-
-
-
-
-
-
-
+    catch(Exception e){
+        out.println(e.getMessage());//输出错误消息
+    }
+  }
+}
 ```
 
 
