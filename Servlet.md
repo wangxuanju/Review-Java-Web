@@ -217,15 +217,73 @@ public class TestGetAndPost extends HttpServlet{
 ```java
 //HttpServlet类中的service方法
 protected void service(HttpServletRequest req,HttpServletResponse resp) throws ServletException,IOException{
-    String 
-
+    String method = req.getMethod();//获得http请求方法
+    //METHOD_GET表示HTTP_GET方法
+    if(method.equals(METHOD_GET)){
+        doGet(req,resp);
+    }else if(method.equals(METHOD_POST)){          //METHOD_POST表示HTTP_POST方法
+        doPost(req,resp);
+    }else{
+        //获得异常信息
+        String errMsg = lStrings.getString("http.method_not_implemented");
+        Object[] errArgs = new Object[1];
+        errArgs[0] = method;
+        errMsg = MessageFormat.format(errMsg,errArgs);
+        //向客户端发送抛出异常信息的通知
+        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,errMsg);
+    }
 }
-
-
-
 ```
+如果在Servlet子类中覆盖了service方法，doXXX方法就不会再被调用；如果想要覆盖后的service方法中仍然调用doXXX方法，可以在service方法中加入如下代码：super.service(request,response);
 
-
+```java         //TestGetAndPost类演示了如何使用service方法处理HTTP的POST和GET请求
+public class TestGetAndPost extends HttpServlet{
+    //覆盖了HttpServlet类的service方法
+    @OVerride       //为注释表示service方法时覆盖父类（HttpServlet）的同名、同参数、同返回类型的方法。
+    protected void service(HttpServletResponse request,HttpServletResponse response)throws ServletException,IOException{
+        response.setContendType("text/html;charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("处理所有的HTTP请求");//向客户端输出信息
+    }
+}
+```
+## 实例：初始化和销毁Servlet
+当Servlet对象实例被Web服务器第一次创建时，会调用HttpServlet类的init方法。开发人员可以在这个方法里实现初始化Servlet的功能，当Web服务器销毁Servlet对象实例时，会调用HttpServlet类的destory方法，开发人员可以在这个方法中释放由Servlet所占用的各种资源；init方法和destory方法在Servlet的整个生命周期都只调用一次。
+```java
+public class TestInitDestory extends HttpServlet{
+    //覆盖destory方法，该方法将在Web服务器销毁TestInitDestory实例时被调用
+    @Override
+    public void destory(){
+        //输出提示信息，以表明Servlet被销毁
+        System.out.println("Servlet被销毁");
+    }
+    //覆盖了init方法，该方法将在web服务器第一次实例化时被调用
+    @Override
+    public void init() throws ServletException{
+        //输出提示信息，以表明Servlet对象实例化被创建第一个实例化被调用
+        Sytem.out.println("初始化Servlet");
+    }
+    //覆盖了doGet方法
+    @Override
+    protected void doGet(HttpServletResponse request,HttpServletResponse response)throws ServletException,IOException{
+        //为了使程序不至于出错，需要加上此方法
+    }
+}
+```
+TestInitDestory类的配置代码如下：
+```java
+<!--定义Servlet的名称：TestInitDestory-->
+<servlet>
+    <servlet-name>TestInitDestory</servlet-name>
+    <servlet-class>chapter4.TestInitDestory</servlet-class>
+</servlet>
+<!--指定Servlet的映射路径-->
+<servlet-mapping>
+    <servlet-name>TestInitDestory</servlet-name>
+    <url-pattern>/servlet/TestInitDestory</url-pattern>
+</servlet-mapping>
+```
+## 实例：输出字符流响应消息——PrintWriter类
 
 
 # 三、掌握HttpServletResponse类
