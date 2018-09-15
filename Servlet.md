@@ -342,6 +342,52 @@ ShowImage类使用了请求参数name来获得客户端指定的图像绝对路�
 getWrier方法和getOutputStream方法不能同时使用。
 
 ## 实例：包含Web资源——RequestDispatcher.include方法
+为了实现代码重用，需要将某些公用的代码和数据放到一个或多个Servlet中，以供其他的Servlet使用。RequestDispatcher.include方法。首先通过getServletContext方法获取ServletContext对象，然后通过ServletContext.getRequestDispatcher方法获取RequestDispatcher对象。
+```java      //包含了一个Servlet:IncludedServlet，和一个html页面
+public class IncludingServlet extends HttpServlet{
+    @Override
+    protected void service(HttpServlet response)throws ServletException,IOException{
+        //设置Context-Type字段值，即类型为text/html，编码格式为gb2312
+        response.setContendType("text/html;charset=gb2313");
+        PrintWriter out = response.getWriter();
+        out.println("中国<br/>");
+        //向客户端输出请求URI
+        out.println("IncludingServlet URI:" + request.getRequestURI() + "<p/>");
+        //封装名
+    
+    }
+
+
+}
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # 三、掌握HttpServletResponse类
 
