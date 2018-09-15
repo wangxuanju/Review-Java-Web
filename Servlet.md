@@ -466,12 +466,118 @@ Cookie是在浏览器访问某个Web资源时，由Web服务器在HTTP响应消�
 在Servlet API中，使用java.servlet.http.Cookie类来封装一个Cookie消息；在HttpServletResponse接口中定义了一个addCookie方法来向浏览器发送Cookie消息，也定义了一个getCookies方法来读取浏览器传递过来的Cookie消息。Cookie类中定义了生成和获取Cookie消息的各个属性的方法。
 Cookie类只有一个构造方法：public Cookie(String name,String vlaue)
 
-Cookie中其他的常用方法;
-getName方法：返回Cookie的名称
-setValue和getValue方法：设置和返回Cookie的值
-setMaxAge和getMaxAge方法：设置和返回Cookie在客户机的有效时间
+Cookie中其他的常用方法：
+getName方法：返回Cookie的名称；
+setValue和getValue方法：设置和返回Cookie的值；
+setMaxAge和getMaxAge方法：设置和返回Cookie在客户机的有效时间；
+setPath和getPath方法：设置和返回当前Cookie的有效web路径；
+setDomain和getDomain方法：设置和返回当前Cookie的有效域；
+setComment和getComment方法：设置和返回当前Cookie的注释部分；
+setVersion和getVersion方法：设置和返回当前Cookie的协议版本；
+setSecure和getSecure方法;设置和返回当前Cookie是否只能使用安全的协议传输Cookie.
+## 实例：通过Cookie技术读写客户端信息
+```java       //SaveCookie类负责向客户端写入三种Cookie：永久Cookie、临时Cookie和有效时间为0的Cookie.
+public class SaveCookie extends HttpServlet{
+    @Override
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置Context-Type字段值
+        response.setContendType("text/html;charset=utf-8");
+        PrintWriter out = response.getWriter(); //获取输出对象out
+        Cookie tempCookie = new Cookie("temp","87654321");
+        response.addCookie(tempCookie); //添加临时Cookie对象
+        //设置MaxAge为0的Cookie
+        Cookie cookie = new Cookie("cookie","6666");
+        //建立超过时间为0的Cookie
+        //MaxAge设为0，浏览器接收到Cookie后，Cookie立即被删除
+        cookie.setMaxAge(0);
+        response.addCookie(cookie); //添加超时时间为0的Cookie对象
+        //获得请求参数user的值
+        String user = request.getParameter(“user”);
+        //如果请求url含有user参数，创建这个永久Cookie
+        if(user!=null){
+            //建立永久的Cookie对象
+            Cookie userCookie = new Cookie("user",user);
+            userCookie.setMaxAge(60*60*24);      //将MaxAge设为 1天
+            //这个Cookie对站点中所有的目录下的访问路径都有效
+            userCookie.setPath("/");
+            response.addCookie(userCookie);     //添加永久Cookie对象
+        }
+        //转发到ReadCookie，并读出已经保存的Cookie值
+        RequestDispatcher readCookie = getServletContext().getRequestDispatcher("/servlet/ReadCookie");
+        readCookie.include(request,response);      //开始转变
+    }
+}
+```
+使用Cookie对象要经过三个步骤：首先通过Cookie类的构造函数创建一个包含保存信息的Cookie对象，然后通过setMaxAge方法设置Cookie对象在客户端的保存时间和通过setPath方法设置客户端访问什么路径传递Cookie对象，最后通过addCookie方法将Cookile对象传递给客户端。
+```java        //在SaveCookie中使用了一个ReadCookie类，这个类负责读取被保存的Cookie值
+public class ReadCookie extends HttpServlet{
+    protected Cookie getCookieValue(Cookie[] cookie,String name){
+        //如果有写入的Cookie，继续下面的操作
+        if(cookie!=null){
+            //在Cookie数组中查找指定的Cookie对象
+            for(Cookie c:cookies){
+                if(c.getName().equals(name))
+                    return c;            //返回查到的Cookie对象
+            }
+        }
+        return null;
+    }
+    @Override
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置Context-Type字段值
+        response.setContendType("text/html;charset=utf-8");
+        PrintWriter out = response.getWriter(); //获取输出对象out
+        //调用getCookieValue方法获得临时Cookie,getCookies方法获得一个保存了消息头中所有的Cookie的数组
+        Cookie tempCookie = getCookieValue(request.getCookie(),"temp");
+        if(tempCookie!=null)
+            out.println("临时Cookie值："+tempCookie.getValue()+"<br/>");
+        else
+            out.println("临时Cookie为设置<br/>");
+        //这个Cookie永远不可能获得，因为它的MaxAge为0
+        Cookie cookie = getCookieValue(request.getCookies(),"cookie");
+        if(cookie!=null)
+            out.println("cookie:"+cookie.getValue()+"<br/>");
+        else
+            out.println("cookie已经被删除了<br/>);
+        //获得永久Coolie
+        Cookie userCookie = getCookieValue(request.getCookies(),"user");
+        if(userCookie!=null)
+            out.println("user:"+userCookie.getValue());
+        else
+            out.println(“user未设置”);
+    }
+}
+```
+通过HttpServletRequest只能获得包含所有的Cookie的数组，要想获得某一个指定的Cookie，就必须在这个数组中查找。
 
-
+## 实例：通过Cookie技术读写复杂数据
+在Cookie中只能保存ISO-8859-1编码支持的字符，在Cookie中保存更复杂的数据，就必须对其进行编码，一般将复杂的数据以Base64格式进行编码。
+演示如何在Cookie中保存一个被序列化的对象实例，并再次从Cookie中将其读出；SaveComplexCookie类负责将MyCookie类的对象实例写到Cookie中
+```java
+public void SaveComplexCookie extends HttpServlet{
+    @Override
+     protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+         //创建一个用于进行Base64编码的BASE64Encoder对象
+         sun.misc.BASE64Encoder base64Encoder = new sun.misc.BASE64Encoder();
+         //创建一个用于接收被序列化的对象实例字节流的ByteArrayOutputStream对象
+         ByteArrayOutputStream classBytes = new ByetArrayOutputStream();
+         //创建一个用于向流中写入对象的ObjectOutputStream对象
+         ObjectOutputStream oos = new ObjectOutputStream(classBytes);
+         oos.writeObject(new MyCookie());      //写入MyCookie对象实例
+         oos.close();     //关闭ObjectOutputStream对象
+         //将被序列化的对象实例的字节流按Base64编码格式进行编码
+         String classStr = bsee64Encoder.endcode(classBytes.toByteArray());
+         Cookie cookie = new Cookie("mycookie",classStr);
+         //将Base64编码写入Cookie
+         cookie.setMaxAge(60*60*24）；       //Cookie的有效时间为1天
+         response.addCookie(cookie);
+         response.setContendType("text/html;charset=utf-8");
+         PrintWriter out = response.getWriter();
+         //输出提示消息
+         out.println("MyCookie的对象实例已写入Cookie");
+     }
+}
+```
 
 
 
