@@ -578,25 +578,118 @@ public void SaveComplexCookie extends HttpServlet{
      }
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+首先获取类MyCookie的字节码数组，然后通过Base64编码将字节码解析成字符串classStr，最后通过Cookie将字符串classStr保存到客户端。
+```java       //实现序列化的类MyCookie
+public class MyCookie implements java.io.Serializable{
+    //获取字符串
+    public String getMsg(){
+        retrun "MyCookie对象实例从Cookie获得的";
+    }
+}
+```
+MyCookie类需要被序列化，因此它必须实现java.io.Serizable接口，否则会抛出java.io.NotSerializableException异常;ReadComplexCookie类负责从Cookie中读取MyCookie的对象实例，并调用其中的getMsg方法.
+```java          //继承类ReadCookie
+public class ReadComplexCookie extends ReadCookie{
+    @Override
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+         try{
+             //创建一个用于进行Base64编码的BASE64Encoder对象
+             sun.misc.BASE64Encoder base64Encoder = new sun.misc.BASE64Encoder();
+             //通过调用方法getCookieValue获得名为mycookie的cookie
+             Cookie cookie = getCookieValue(request.getCookies(),"mycookie");
+             if(cookie==null)
+                 return ;
+             //取mycookir的值，也就是被序列化的MyCookie的类
+             String classStr = cookie.getValue();
+             //对classStr字符串进行Base64解码
+             byte[] classBytes = base64Decoder.decoderBuffer(classStr);
+             //根据序列化的字节流创建ObjectInputStream对象
+             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(classBytes));
+             //得到MyCookie对象实例
+             MyCookie myCookie  = (MyCookie)ois.readObject();
+             response.setContentTyep("text/html;charset=utf-8");
+             PrintWriter out = response.getWriter();
+             out.println(myCookie.getMsg());         //调用getMsg方法
+         }catch(Exception e){
+         
+         }
+}
+```
+在ReadComplexCookie中使用了getCookieValue方法，因此这个类需要从ReadCookie类继承。
 
 # 六、处理Session
+## 认识操作Session的方法
+一种将大量数据保存在服务端的技术，并使用SessonID对这些数据进行跟踪，就是Session技术。
+在Servlet中使用HttpSession类来描述Sessin，一个HttpSession对象就是一个Session，使用HttpServletRquest接口的getSession方法可以获得一个HttpSession对象。
+
+
+## 创建Session对象
+一个请求只能属于一个Session，但一个Session也可以拥有多个请求。HttpServletRequest接口中定义了一些与Session相关的方法，其中getSessin()方法时HttpServletRequest接口的方法。这个方法用于返回与当前请求相关的HttpSession对象，该方法有两种重载形式：
+```java
+public HttpSession getSession();
+public HttpSession getSession(boolean create);
+```
+调用第一种重载形式，如果在请求消息中含有SesionID,就根据这个SessionID返回一个HttpSession对象，如果在请求消息中不包含SessionID，就创建一个新的HttpSession对象，并返回它；在调用第二种重载形式时，如果create参数为true时,与第一种重载形式完全一样；如果create为false时，当请求消息中不包含SessionID时，并不创建一个新的HttpSession对象，而是直接返回null.
+(方法getSession()或方法getSession(true)用来实现创建Session对象，而方法getSession(false)用来实现获取Session对象。）
+
+## 实例：通过Cookie跟踪Session
+客户端必须通过一个SessionID才能找到以前在服务端创建的某一个HttpSession对象，通过SessionID寻找HttpSession对象的过程也叫做Session跟踪。
+通过客户端的SessionID通过HTTP请求消息头的Cookie字段发送给服务端，然后服务端通过getSession方法读取Cookie字段的值，已确定是需要新建一个HttpSession对象，还是获得一个已经存在的HttpSession对象，或者什么都不做，直接返回null.
+```java
+public class SessionServlet extends HttpServlet{
+    @Override
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置Context-Type字段值
+        response.setContendType("text/html;charset=utf-8");
+        PrintWriter out = response.getWriter(); //获取输出对象out
+        //获取一个HttpSession对象
+        HttpSession session = request.getSession();
+        //设置Session的有效间隔为1天
+        session.setMaxInactiveInterval(60*60*24);
+        //如果是新建立的Session对象，保存属性值
+        if(session.isNew()){
+            //向Session中写入一个值
+            session.setAttribute("session","宇宙");
+            out.pirntln(“新会话已经建立”);  //输出提示信息
+        }else{
+            //如果是以前建立的会话，输出这个属性值
+            out.println("会话属性值"+session.getAttribute("session"));
+        }
+}
+```
+## 实例;通过重写URL跟踪Session
+通过URL发送SessionID,必须要重写URL;HttpServletResponse提供了如下两个方法用于重写URL：
+```java
+encodeURL方法;用于对所有内嵌在Servlet中的URL进行重写。
+encodeRedirectURL方法：用于对sendRedirect方法所使用的URL进行重写。
+```
+如果HTTP请求消息头中没有Cookie字段，或是Cookie字段中没有名为JSESSIONID的Cookie，这两个方法就会在调用getSession获得SessinID后，将这个SessionID写到当前请求的URL后面。
+```java
+public class NewSessionServlet extends HttpServlet{
+    @Override
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置Context-Type字段值
+        response.setContendType("text/html;charset=utf-8");
+        PrintWriter out = response.getWriter(); //获取输出对象out
+        //获得指向SessionServlet的RequestDispatche对象
+        RequestDiapatcher sessionServlet = getServletContext().getRequestDispatcher("/servlet/SessionServlet");
+        sessionServlet.include(request,response);
+        //开始包含SessionServlet
+        //向客户端输出被重写的URL
+        out.println("<br><a href='"+response.encodeURL("SessionServlet")+"'>SessionServlet</a>");
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
 
 
 
