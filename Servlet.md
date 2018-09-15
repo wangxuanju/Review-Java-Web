@@ -346,56 +346,145 @@ getWrier方法和getOutputStream方法不能同时使用。
 ```java      //包含了一个Servlet:IncludedServlet，和一个html页面
 public class IncludingServlet extends HttpServlet{
     @Override
-    protected void service(HttpServlet response)throws ServletException,IOException{
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
         //设置Context-Type字段值，即类型为text/html，编码格式为gb2312
         response.setContendType("text/html;charset=gb2313");
         PrintWriter out = response.getWriter();
         out.println("中国<br/>");
         //向客户端输出请求URI
         out.println("IncludingServlet URI:" + request.getRequestURI() + "<p/>");
-        //封装名
-    
+        //封装名为IncludedServlet的servlet
+        RequestDiapatcher rd = this.getServletContext().getRequestDispatcher("/servlet/IncludedServlet");
+        rd.include(request,response);      //包含IncludedServlet
+        //封装IncludedHtml.html页面
+        rd = getServletContext().getRequestDispatcher("/chapter4/IncludedHtml.html");
+        rd.include(request,response);  //包含incluedHtml.html页面
     }
-
-
 }
-
-
-
 ```
+上面的程序包含了两个web资源，映射路径为"/servlet/IncludedServlet"的Servlet类和名为IncldedHtml.html的静态页面。
 
+getRequestDispatcher方法的参数值必须以“/”开头。
+```java
+public class IncludedServlet extends HttpServlet{
+    @Ovrride
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置Context-Type字段值，即类型为text/plain，编码格式为utf-8
+        response.setContendType("text/plain;charset=utf-8");
+        PrintWriter out = response.getWriter();
+        out.println("<b>超人</b><br/>");  //输出带HTML代码的信息
+        out.println("IncludedServlet URI:"+request.getRequestURI()+"<p/>");//向客户端输出请求URI
+    }
+}
+```
+(调用include方法就相当于Servlet引擎在IncludingServlet的service方法又调用了IncludedServlet的service方法，并将IncludingServlet的service方法的两个参数传入IncludedServlet的service方法，因此才会得到同样的URI值)
+(在被调用者中设置的响应消息头将被忽略)
 
+## 实例：转发Web资源——RequestDispatcher.forward方法
+RequestDispatcher类的forward方法可以转发Web资源，forward方法与include方法有5点不同:
 
+(1)在调用forward方法之前，输出缓冲区的数据会被清空。
 
+(2)调用forward方法之前，已经将缓冲区中的数据发送到客户端，在调用forward方法时会抛出IllegalStateException异常。
 
+(3)在调用者和被调用者中设置响应消息头都不会被忽略，而调用include方法时，只有在调用者中设置响应消息头才会生效。
 
+(4)Servlet引擎会根据RequestDispatcher对象所包含的资源对HttpServletRequest对象中的请求路径和参数消息进行调整；而使用include方法时Servlet引擎并不调整这些消息。
 
+(5）froward方法只能使用一次，否则会抛出IllegalStateException异常，而include方法可以多次使用。
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```java
+public class ForwardServlet extends HttpServlet{
+    @Ovrride
+    protected void service(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //RequestDispatcher对象封装的资源路径前必须加“/"
+        RequestDispatcher rd = getServletContext().getRequestDispatcher("/servlet/IncludingServlet");
+        rd.forward(request,response); //转发到IncludingServlet
+    }
+}
+```
+在被转入的web资源（IncludingServlet）中改变了HttpServletRequest中的请求路径，因此会输出/webdemo/servlet/IncludingServlet的请求路径。
 
 # 三、掌握HttpServletResponse类
+HTTP协议的状态响应码
+```java
+public class ExploreResponseHeader extends HttpServlet{
+    //处理客户端的GET请求
+    public void doGet(HttpServletRequest request,HttpServletResponse response)throws ServletException,IOException{
+        //设置Context-Type字段的值
+        response.setContextType("text/html;charset=UTF-8");
+        response.setHeader("Context-Length","1234");
+        //加一个NewField1字段
+        response.addHeader("NewField1","value1");
+        //获得Calendar对象
+        Calendar cal = Calendar.getInstance();
+        cal.set(2008,11,25); //月从0~11,1月用0表示
+        //加一个MyDate字段
+        response.addDateHeader("MyDate",cal.getTimeInMillis());
+        //加一个NewField2字段
+        response.setIntHeader("NewField2",3000;
+    }
+}
+```
+(1)添加和设置响应消息头——addHeader与setHeader方法
 
+addHeader和setHeader方法用于设置HTTP响应消息头的所有字段，定义如下;
+```java
+public void addHeader(String name,String value);
+public void setHeader(String name,String value);
+```
+name参数表示响应消息头的字段名，value表示响应消息头的字段值，这两个方法都向响应消息头增加一个字段。
 
+（2）操作整数类型的响应消息头——addIntHeader与setIntHeader方法
+
+HttpServletResponse提供两个专门设置整型字段值的方法，定义如下;
+```java
+public void addIntHeader(String name,int value);
+public void setIntHeader(String name,int value);
+```
+这两个方法在设置整型字段值时避免将int类型转换为String类型值的麻烦。
+
+（3）操作时间类型的响应消息头——addHeader与setDateHeader方法
+
+HttpServletResponse提供了两个专门用于设置日期字段值的方法，定义如下：
+```java
+public void addDateHeader(String name,long date);
+public void setDateHeader(String name,long date);
+```
 # 四、掌握HttpServletRequest类
-
-
+在客户端请求某一个Servlet时，Servlet引擎为这个Servlet创建一个HttpServletRequest对象来存储客户端的请求消息，并在调用service方法时将HttpServletRequest对象作为参数传给了service方法。
+## 获取请求行消息
+HttpServletRequest接口中定义了若干的方法来获取请求行中各部分的消息。
+## 获取网络连接消息
+要运行Java Web消息，首先需要在服务端部署Java Web程序，然后才通过客户端连接服务器进行请求；在具体编写程序时，有时需要获取客户端与服务端网络连接的消息。
+## 获取请求头消息
+跟HttpServletResponse相似，类HttpServletRequest也定义了许多方法来操作请求消息中的请求头。HttpServletRequest接口中也定义了一些用于获得请求头消息的方法。
 # 五、处理Cookie
+Cookie是在浏览器访问某个Web资源时，由Web服务器在HTTP响应消息头中通过Set-Cookie字段发送给浏览器的一组消息。
+一个cookie只能表示一个key-value对，由Cookie名和Cookie值组成。
+## 认识操作Cookie的方法
+在Servlet API中，使用java.servlet.http.Cookie类来封装一个Cookie消息；在HttpServletResponse接口中定义了一个addCookie方法来向浏览器发送Cookie消息，也定义了一个getCookies方法来读取浏览器传递过来的Cookie消息。Cookie类中定义了生成和获取Cookie消息的各个属性的方法。
+Cookie类只有一个构造方法：public Cookie(String name,String vlaue)
+
+Cookie中其他的常用方法;
+getName方法：返回Cookie的名称
+setValue和getValue方法：设置和返回Cookie的值
+setMaxAge和getMaxAge方法：设置和返回Cookie在客户机的有效时间
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
