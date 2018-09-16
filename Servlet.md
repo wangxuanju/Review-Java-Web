@@ -667,6 +667,7 @@ public HttpSession getSession(boolean create);
 (方法getSession()或方法getSession(true)用来实现创建Session对象，而方法getSession(false)用来实现获取Session对象。）
 
 ## 实例:通过Cookie跟踪Session
+
 客户端必须通过一个SessionID才能找到以前在服务端创建的某一个HttpSession对象，通过SessionID寻找HttpSession对象的过程也叫做Session跟踪。
 通过客户端的SessionID通过HTTP请求消息头的Cookie字段发送给服务端，然后服务端通过getSession方法读取Cookie字段的值，已确定是需要新建一个HttpSession对象，还是获得一个已经存在的HttpSession对象，或者什么都不做，直接返回null.
 ```java
@@ -692,6 +693,7 @@ public class SessionServlet extends HttpServlet{
 }
 ```
 ## 实例:通过重写URL跟踪Session
+
 通过URL发送SessionID,必须要重写URL;HttpServletResponse提供了如下两个方法用于重写URL：
 ```java
 encodeURL方法;用于对所有内嵌在Servlet中的URL进行重写。
