@@ -1,5 +1,5 @@
 <!-- GFM-TOC -->
-* [一、编写Java Web的HelloWord程序](#一编写java web的helloword程序)
+* [一、编写Java Web的HelloWord程序](#一编写javaweb的helloword程序)
 * [用MyEclipse工具建立一个Servlet程序——Helloword](#用myeclipse工具建立一个servlet程序——helloword)
 * [二、学习Servlet技术](#二学习servlet技术)
 * [配置Tomcat7服务器的数据库连接池](#配置tomcat7服务器的数据库连接池)
