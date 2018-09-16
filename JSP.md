@@ -267,9 +267,90 @@ web工程路径：
 </context-param>
 ```
 # 六、JSP标签
+在JSP规范中定义了一些标准的标签，这些标签也被称为标准动作，使用了XML格式进行描述。
+## 包含标签<jsp:include>
+<jsp:inclde>标签将另一个静态或动态的资源插入到当前的JSP页面中；语法格式如下：
+```java
+//第一种用法
+<jsp:include page="relativeURL" flush="true|false"/>
+//第二种用法
+<jsp:include page="relativeURL" flush="true|false>
+{<jsp:param...../>}*
+</jsp:include>
+```
+page属性表示一个相对于当前页的相对路径；flush属性表示在插入资源之前是否清空out缓冲区，默认值是false;第二种语法格式可以向relativeURL所指的web资源传递参数。
+### 引入资源的方式
+include指令是静态引入web资源的；include方法和<jsp:include>标签是动态引入web资源的。
+### HTTP响应头的改变
+include指令可以改变响应状态码和HTTP响应头。
+### web资源的路径
+include方法和<jsp:include>标签的相对路径都是相对于页面的，而include指令的相对路径是相对于文件的。
+```java
+<%@ page pageEncoding="UTF-8">
+include指令
+<%@include file="included.jsp"%>
+<br>
+include标签
+<jsp:include page="include.jsp"/>
+<br>
+include方法：
+<% 
+    pageContext.inclde("included.jsp");
+%>
+```
+上面的三个URL都执行成功，如在web.xml中加入下面的配置代码，就将compareInclude.jsp页面映射到新的web路径。
+```java
+<!--定义JSP本身的属性-->
+<servlet>
+    <servlet-name>ComprareInclude</servlet-name>
+    <jsp-file>/chapter5/compareInclude.jsp</jsp-file>
+</servlet>
+<!--定义JSP映射信息-->
+<servlet-mapping>
+    <servlet-name>CompareInclude</servlet-name>
+    <url-pattern>/myspace/compareInclde.jsp</url-pattern>
+</servlet-mapping>
+```
+include指令的相对路径是文件的相对路径；而include标签和include方法的相对路径是相对于web路径的。
+## web资源的扩展名
+include指令在引用JSP文件时，按照JSP页面来处理，而include方法和<jsp:include>标签所引用的JSP文件的扩展名必须是.jsp才可以。
+## 处理不存在的web资源
+当相对路径所指的web资源不存在时，include指令抛出异常，而include方法和<jsp:include>标签会向客户端输出一条提示信息后，继续执行后面的JSP代码。
 
+## 转发标签<jsp:forward>
+实现转发的标签——<jsp:forward>，主要用于将当前请求转发给其他的静态资源、JSP页面或Servlet，语法格式如下：
+```java
+格式一
+<jsp:forward page="relativeURL|<%=expression %>"/>
+格式二
+<jsp:forward page="relativeURL|<%=expression %>">
+{<jsp:param.../>}*
+</jsp:forward>
+```
+<jsp:forward>标签的page属性不仅可以是相对路径，而且可以是JSP表达式返回的值；在使用<jsp:forward>标签时应该注意以下几点：
 
+（1）当前JSP页面的out缓冲区中有数据，在forward之前会清空out缓冲区；
 
+（2）在调用<jsp:forward>之前，out缓冲区已经被刷新，当调用<jsp:forward>时会抛出java.in.IOException异常；
+
+（3）当<jsp:forward>标签前面的输出字符数量大于缓冲区的尺寸时，系统会抛出java.lang.IllegalStateException异常；
+
+（4）当前页未使用out缓冲区，并且在<jsp:forward>标签前有任意字符，系统会抛出java.lang.IllegalStateException异常。
+
+## 传参标签<jsp:param>
+实现传递参数功能的标签——<jsp:param>,该标签主要用来作为其他JSP标签的子标签，以便向其他的标签传递参数。语法如下：
+```java
+<jsp:param name="name" value="value"|<%=expression%>"/>
+```
+<jsp:param>标签传递的是URL的参数。
+```java
+<jsp:include page="/chapter5/processParam.jsp?id=1234&age=30">
+    <!--使用param标签为URL添加请求参数值-->
+    <jsp:param name="name" value="bill">
+    <jsp:param name="age" value="35">
+    <jsp:param name="salary" value="<%=3000/1.2%>"/>
+</jsp:include>
+```
 
 
 
