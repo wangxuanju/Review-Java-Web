@@ -235,25 +235,40 @@ isErrorPage属性用来指定当前JSP页面是否可用于处理其他JSP页面
     //当isErrorPage的值为false时，无法使用exception对象
     exception.printStackTrace(new java.io.PrintWriter(out));
 %>
-
-
-
-
 ```
 
 
 
 
+### contentType属性
+contentType属性用于设置响应正文的MIME类型和JSP页面中文字符集编码；contentType属性的默认MIME属性是text/html，默认字符集是ISO-8859-1;
+```java
+<!--设置编码格式维UTF-8，以支持中文-->
+<%@page errorPage="error.jsp" contentType="text/html;charset=UTF-8"%>
+<!--设置编码格式为GBK，以支持中文-->
+<%@page errorPage="error.jsp" contentType="text/html;charset=GBK"%>
+```
+### pageEncoding属性
+pageEncoding属性用于指定JSP页面中文内容的字符集编码格式；如果指定了pageEncoding属性，contentType属性中的charset就不具有指定JSP页面中文内容的字符集编码的作用了。
+### isELignored属性
+isELignored属性用于设置JSP页面是否支持EL。isELIgnored属性的默认值是false.
 
+## JSP指令include
+include指令用于将其他的文件静态的加入到当前的JSP页面中，语法格式如下：
+```java
+<%@ include file="relativeURL"%>
+```
+如果在当前的JSP页面中未通过page指令的contendType属性设置字符集编码，则在被引入的JSP程序中通过page指令设置的pageEncoding属性值将作为当前JSP页面内容的编码格式。
+```java
+<%@page pageEncoding="UTF-8"%>
+<!--包含文件-->
+<%@include file="included.myjsp"%>
+小于10000的随机数:<%=new java.util.Random().nextInt(10000)%>
 
-
-
-
-
-
-
-
-
+下面来编写included.myjsp页面
+<%@ page import="java.util.*" contentType="text/html;charset=UTF-8"%>
+included.myjsp中的内容<br>
+```
 
 # 五、JSP内置对象
 ## 内置对象out
