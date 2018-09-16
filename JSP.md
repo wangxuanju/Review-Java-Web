@@ -425,10 +425,62 @@ beanName="beanName"|<%=expression%>|EL" type="typeName"
 ## 设置属性值标签<jsp:setProperty>
 <jsp:setProperty>标签用来设置对象实例的属性值，可以放在<jsp:useBean>的标签体中，也可以单独使用。
 <jsp:setProperty>有四个属性：
-（1）name:对象实例名
-（2）property:对象实例的属性名
-（3）param:URL中的参数名
-（4）value:指定
+
+（1）name:对象实例名；
+
+（2）property:对象实例的属性名；
+
+（3）param:URL中的参数名；
+
+（4）value:指定某个属性的值；
+
+```java
+<%@page pageEncoding="UTF-8"%>
+<%--创建MyClass类的对象实例--%>
+<jsp:useBean id="myClass" class="chapter5.MyClass"/>
+<%--
+    //也可以这样创建MyClass类的对象实例
+    <jsp:useBean id="myclass" beanName="chapter5.MyClass" type="chapter5.MyClass"/>
+--%>
+<%--直接设置属性值--%>
+<jsp:setProperty property="name" name="myClass" value="bill"/>
+<jsp:setProperty property="age" name="myClass" value="32"/>
+<%--使用不同名为URL请求参数设置属性值，也就是说，URL的参数中必须有name和age--%>
+<jsp:setProperty property="name" name="myClass" param="newName"/>
+<jsp:setProperty property="age" name="myClass" param="newParam"/>
+<%--使用URL请求参数自动设置所有的属性--%>
+<jsp:setProperty property="*" name="myClass”/>
+<%
+    //获取域里名为"myClass"的值的name属性的值；
+    String name=((chapter5.MyClass)pageContext.getAttribute("myClass")).getName();
+    //获取域里名为"myClass"值的age属性的值
+    int age=((chapter5.MyClass)pageContext.getAttribute("myClass")).getAge();
+    out.println("name:"+name);//输出属性name的值
+    out.println("<br>age:");
+    out.println(age);      //输出属性age的值
+%>
+```
+从代码中可以看出，使用java代码从pageContext对象中可以获得myClass类的对象实例  ，并输出相应的属性值。
+如果使用URL请求参数设置属性值，且和属性同名的URL请求参数不存在时，就会使用param参数指定的请求参数来设置这个属性。
+
+## 获取属性值标签<jsp:getProperty>
+<jsp:getProperty>实现获取对象属性功能的标签，主要用于获得对象实例的实现值，语法格式如下：
+```java
+<jsp:getProperty name="name" property="propertyName"/>
+```
+```java
+<!--创建MyClass类的对象实例-->
+<jsp:useBean id="myClass" beanName="chapter5.MyClass" type="chapter5.MyClass"/>
+<!--设置MyClass对象实例的name属性-->
+<jsp:setProperty property="name" name="myClass" value="bill"/>
+<!--设置MyClass对象实例的age属性-->
+<jsp:setproperty property="age" name="myClass" value="32"/>
+<!--输出MyClass对象实例的name属性值-->
+name:<jsp:getProperty property="name" name="myClass"/>
+<br>
+<!--属性MyClass对象实例的age属性值-->
+age:<jsp:getProperty property="age" name="myClass"/>
+```
 
 
 
