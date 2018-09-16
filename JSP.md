@@ -18,14 +18,14 @@
     * [其他内置对象](#其他内置对象)
     * [application对象](#application对象)
 * [六、JSP标签](#六jsp标签)
-    * [包含标签<jsp:include>](#包含标签<jsp:include>)
+    * [包含标签<jsp：include>](#包含标签<jsp：include>)
     * [web资源的扩展名](#web资源的扩展名)
     * [处理不存在的web资源](#处理不存在的web资源)
-    * [转发标签<jsp:forward>](#转发标签<jsp:forward>)
-    * [传参标签<jsp:param>](#传参标签<jsp:param>)
-    * [创建Bean标签<jsp:useBean>](#创建bean标签<jsp:usebean>)
-    * [设置属性值标签<jsp:setProperty>](#设置属性值标签<jsp:setproperty>)
-    * [获取属性值标签<jsp:getProperty>](#获取属性值标签<jsp:getproperty>)
+    * [转发标签<jsp：forward>](#转发标签<jsp：forward>)
+    * [传参标签<jsp：param>](#传参标签<jsp：param>)
+    * [创建Bean标签<jsp：useBean>](#创建bean标签<jsp：usebean>)
+    * [设置属性值标签<jsp：setProperty>](#设置属性值标签<jsp：setproperty>)
+    * [获取属性值标签<jsp：getProperty>](#获取属性值标签<jsp：getproperty>)
 * [七、JSP表征标签库](#七jsp表征标签库)
 <!-- GFM-TOC -->
 # 一、通过MyEclipse工具编写一个JSP程序
@@ -415,7 +415,7 @@ web工程路径：
 ```
 # 六、JSP标签
 在JSP规范中定义了一些标准的标签，这些标签也被称为标准动作，使用了XML格式进行描述。
-## 包含标签<jsp:include>
+## 包含标签<jsp：include>
 <jsp:inclde>标签将另一个静态或动态的资源插入到当前的JSP页面中；语法格式如下：
 ```java
 //第一种用法
@@ -464,7 +464,7 @@ include指令在引用JSP文件时，按照JSP页面来处理，而include方法
 ## 处理不存在的web资源
 当相对路径所指的web资源不存在时，include指令抛出异常，而include方法和<jsp:include>标签会向客户端输出一条提示信息后，继续执行后面的JSP代码。
 
-## 转发标签<jsp:forward>
+## 转发标签<jsp：forward>
 实现转发的标签——<jsp:forward>，主要用于将当前请求转发给其他的静态资源、JSP页面或Servlet，语法格式如下：
 ```java
 格式一
@@ -484,7 +484,7 @@ include指令在引用JSP文件时，按照JSP页面来处理，而include方法
 
 （4）当前页未使用out缓冲区，并且在<jsp:forward>标签前有任意字符，系统会抛出java.lang.IllegalStateException异常。
 
-## 传参标签<jsp:param>
+## 传参标签<jsp：param>
 实现传递参数功能的标签——<jsp:param>,该标签主要用来作为其他JSP标签的子标签，以便向其他的标签传递参数。语法如下：
 ```java
 <jsp:param name="name" value="value"|<%=expression%>"/>
@@ -498,7 +498,7 @@ include指令在引用JSP文件时，按照JSP页面来处理，而include方法
     <jsp:param name="salary" value="<%=3000/1.2%>"/>
 </jsp:include>
 ```
-## 创建Bean标签<jsp:useBean>
+## 创建Bean标签<jsp：useBean>
 一个创建JavaBean类对象功能的标签——<jsp:useBean>,用于在不使用java代码的前提下创建类的对象实例，语法如下：
 ```java
 格式一
@@ -569,7 +569,7 @@ beanName="beanName"|<%=expression%>|EL" type="typeName"
 ```
 将scope属性设为page时，<jsp:useBean>标签创建的对象只对当前页面有效，并且<jsp:useBean>标签在创建对象之前，会先在page域里查找是否存在和id属性值同名的对象。如果存在，就不会再创建新的对象实例。当scope属性的值page时，每次刷新页面都会输出标签体。但当scope属性的值为session时，由于刷新页面时仍然位于一个IE窗口，所以session是共享的。
 
-## 设置属性值标签<jsp:setProperty>
+## 设置属性值标签<jsp：setProperty>
 <jsp:setProperty>标签用来设置对象实例的属性值，可以放在<jsp:useBean>的标签体中，也可以单独使用。
 <jsp:setProperty>有四个属性：
 
@@ -610,7 +610,7 @@ beanName="beanName"|<%=expression%>|EL" type="typeName"
 从代码中可以看出，使用java代码从pageContext对象中可以获得myClass类的对象实例  ，并输出相应的属性值。
 如果使用URL请求参数设置属性值，且和属性同名的URL请求参数不存在时，就会使用param参数指定的请求参数来设置这个属性。
 
-## 获取属性值标签<jsp:getProperty>
+## 获取属性值标签<jsp：getProperty>
 <jsp:getProperty>实现获取对象属性功能的标签，主要用于获得对象实例的实现值，语法格式如下：
 ```java
 <jsp:getProperty name="name" property="propertyName"/>
