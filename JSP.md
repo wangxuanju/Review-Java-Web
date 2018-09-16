@@ -151,6 +151,108 @@ JSP表达式可以在JSP页面中嵌入java代码，但所嵌入的java代码只
 ## JSP表达式语言（EL）
 
 # 四、JSP指令
+## JSP指令
+JSP指令被引擎翻译成java代码；JSP指令只是设置Servlet引擎如何处理JSP页面，或是向Servlet源代码中添加一些其他的JSP元素无法生成的java代码。
+JSP指令的语法格式如下：
+```java
+<%@ 指令 属性名=“值” %>
+```
+```java
+下面两条page指令分别设置了contentTyep和pageEncoing属性。
+<%@page contentTyep="text/html"%>
+<%@page pageEncoding="UTF-8" %>
+```
+## JSP指令page
+page指令用于设置JSP页面的全局属性。通常将page指令放到JSP页面的起始位置。
+```java
+<%@ page
+[language="java"][extends="package.class"]
+[import="{package.class|package.8}，..."]
+[session="ture|false"]
+[buffer="none|8kb|sizekb"][autoFlush="true|false"]
+[isThreadSafe="true|false"][info="text"]
+[errorPage="relativeURL"][isErrorPage="true|false"]
+[contendType={mimeType[;charset=characterSet]|text/html;charset=ISO-8859-1}"]
+[pageEncoding="{characterSet|ISO-8859-1}"]
+[isELIgnored="true|false"]
+```
+每队方括号（[]）分别表示page指令的一个属性，属性值中用竖杠（|）分割的不同部分为该属性可以设置的值；import属性是唯一允许出现多次的属性。
+
+### language属性
+language属性设置JSP页面所使用的开发语言。
+### extends属性
+extends属性设置了由JSP页面生成的Servlet类所继承的父类。
+### import属性
+import属性指定在JSP页面被翻译成Servlet源代码后要导入的包或类。
+```java
+<%@ page import="java.util.*" import="java.io.*" import="java.util.Random"%>
+```
+还可以在一个import属性中使用逗号，分割不同的包或类。
+```java
+<%@ page import="java.util.*,java.io.*,java.util.Random"%>
+```
+### session属性
+session属性用于指定在JSP页面中是否创建内置session对象。
+当session属性设为false后，即使在JSP页面中使用getSession方法也只能获得一个空的HttpSession对象，如下所示：
+```java
+<%@page session="false" contendType="text/html"%>
+<%
+    HttpSession newSession = pageContext.getSession();//newSession为null
+    System.out.println(newSession);     //在控制台输出null
+%>
+```
+如果某个JSP页面不需要对客户端进行跟踪时，最好将session属性的值设为false，以避免过多的创建HttpSession对象。
+### buffer属性
+buffer属性用于设置JSP的内置对象out的缓冲区大小，默认值是8kb；如果将buffer设为none，out对象则不适用缓冲区。
+### autoFlush属性
+autoFlush属性用于设置当内置对象out的缓冲区已满时，是将缓冲区中的内容刷新到客户端（autoFlush的属性值为true），还是抛出缓冲区溢出的异常（autoFlush属性值为false)，该属性的默认值是true.
+autoFlush属性的值实际上就是getPageContext方法的最后一个参数值。
+### isTreadSafe属性
+isThreadSafe属性用于设置JSP页面是线程安全的，默认值为true.
+### info属性
+info属性用于定义一个用于描述当前JSP页面的字符串信息。
+```java
+<%@ page info="输出info属性的值" contendType="text/html" pageEncoding="utf-8"%>
+<%--输出info属性的值--%>
+info属性的值：<%=getServletInfo()%>
+```
+### errorPage属性
+errorPage属性用于设置如何处理JSP页面抛出的异常。如果JSP页面抛出了未被捕获的异常，就会自动跳转到errorPage属性所指定的页面。
+### isErrorPage属性
+isErrorPage属性用来指定当前JSP页面是否可用于处理其他JSP页面未捕获的异常，默认值为false；errorPage属性所指的异常处理页面必须将exception对象属性设为true;否则无法在异常处理页中引用内置对象exception；因此exception对象只有在isErrorPage属性设为true时才存在。
+```java
+<!--testError.jsp-->
+<%@page errorPage="error.jsp" contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    java.util.Random rand=null;
+    out.println(rand.nextInt());  //抛出一个NullPointerException异常
+%>
+下面的error.jsp页面负责处理由testError.jsp抛出的异常
+<!--error.jsp-->
+<%@ page isErrorPage="true" contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    out.println("错误跟踪信息:<br>");
+    //当isErrorPage的值为false时，无法使用exception对象
+    exception.printStackTrace(new java.io.PrintWriter(out));
+%>
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # 五、JSP内置对象
