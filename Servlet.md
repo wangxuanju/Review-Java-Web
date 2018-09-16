@@ -24,7 +24,7 @@
 * [六、处理Session](#六处理session)
 * [认识操作Session的方法](#认识操作session的方法)
 * [创建Session对象](#创建session对象)
-* [实例：通过Cookie跟踪Session](#实例：通过cookie跟踪session)
+* [实例:通过Cookie跟踪Session](#实例:通过cookie跟踪session)
 * [实例:通过重写URL跟踪Session](#实例:通过重写url跟踪session)
 * [七、解决Web开发中的乱码问题](#七解决web开发中的乱码问题)
 <!-- GFM-TOC -->
