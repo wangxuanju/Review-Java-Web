@@ -45,7 +45,7 @@ public class Helloworld extends HttpServlet{
         rsponse.setContentType("text/html");
         //获得用于输出消息的PrintWriter对象
         PrintWriter out = response.getWriter();
-        out.println("<b>Hello world</B>");//向客户端输出Hello world
+        out.println("<b>Hello world</b>");//向客户端输出Hello world
     }
 }
 ```
@@ -89,6 +89,7 @@ public class Helloworld extends HttpServlet{
 # 二、学习Servlet技术
 ## 配置Tomcat7服务器的数据库连接池
 Tomcat服务器提供了一种数据库连接优化的技术——数据库连接技术。数据库连接池负责分配、管理和释放数据库连接，它允许应用程序使用一个现有的数据库连接，而不是重新建立一个数据库连接。
+
 在Tomcat中配置数据库连接有两种形式：配置全局数据库连接和配置局部数据库连接。
 ```java          //配置全局数据库
 <Resource name = "jdbc/webdb" auth="Container"                //name:设置数据源名称，通常有“jdbc/xxx”格式 //auth:设置数据源的管理者
@@ -162,9 +163,9 @@ public class ViewDictionary extends HttpServlet{
             table.append("<tr><td>"+rs.getString("english")+"</td><td>");
             table.append(rs.getString("chinese")+"</td></tr>");
         }
-        table.append("</table");
-        out.println(table.toStirng());//输出查询结果
-        pstm.close();         //关闭PreparedStatement对象
+        table.append("</table>");
+        out.println(table.toString());//输出查询结果
+        pstm.close();                 //关闭PreparedStatement对象
     }
     catch(Exception e){
         out.println(e.getMessage());//输出错误消息
@@ -203,7 +204,7 @@ protected void doPost(HttpServletRequest req,HttpServletResponse resp)thorws Ser
 ```java
 public class TestDoPost extends HttpServlet{
     //处理客户端的POST请求
-    protected void doPosst(HttpServletRequest request,HttpServletResponse response)thorws ServletException,IOException{
+    protected void doPost(HttpServletRequest request,HttpServletResponse response)thorws ServletException,IOException{
         response.setContentType("text/html;charset=UTF-8");//设置Context-Type字段
         PrintWriter out = response.getWriter();//获得PrintWriter对象
         out.println("处理HTTP POST请求");//向客户端输出消息
@@ -261,8 +262,9 @@ protected void service(HttpServletRequest req,HttpServletResponse resp) throws S
         //获得异常信息
         String errMsg = lStrings.getString("http.method_not_implemented");
         Object[] errArgs = new Object[1];
-        errArgs[0] = method;
+        errArgs[0] = method;          //获得当前http请求方法名
         errMsg = MessageFormat.format(errMsg,errArgs);
+        //格式异常信息
         //向客户端发送抛出异常信息的通知
         resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED,errMsg);
     }
@@ -273,7 +275,7 @@ protected void service(HttpServletRequest req,HttpServletResponse resp) throws S
 ```java         //TestGetAndPost类演示了如何使用service方法处理HTTP的POST和GET请求
 public class TestGetAndPost extends HttpServlet{
     //覆盖了HttpServlet类的service方法
-    @OVerride       //为注释表示service方法时覆盖父类（HttpServlet）的同名、同参数、同返回类型的方法。
+    @OVerride       //为注释表示service方法是覆盖父类（HttpServlet）的同名、同参数、同返回类型的方法。
     protected void service(HttpServletResponse request,HttpServletResponse response)throws ServletException,IOException{
         response.setContendType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
@@ -318,11 +320,11 @@ TestInitDestory类的配置代码如下：
 </servlet-mapping>
 ```
 ## 实例：输出字符流响应消息——PrintWriter类
-前面的例子均使用PrintWriter对象向客户端输出信息；通过HttpServletResponse类的getWriter方法获得PrintWriter类的对象实例，具体使用时注意：
+前面的例子均使用PrintWriter对象向客户端输出信息；也可以通过HttpServletResponse类的getWriter方法获得PrintWriter类的对象实例，具体使用时注意：
 
 （1）当通过HttpServletResponse类的getWriter方法获取PrintWriter类对象之前，需要使用setContendType方法设置Content-Type字段值。
 
-（2）HttpServletResponse类的addHeader和setHeader方法用来进行相应头的设置，可以在调用getWriter方法前后被调用。
+（2）HttpServletResponse类的addHeader和setHeader方法用来进行响应头的设置，可以在调用getWriter方法前后被调用。
 
 （3）虽然可以使用addHeader和setHeader方法在调用getWriter方法后设置Contend-Type字段的值，如果在调用getWriter方法之前使用setContendType方法设置相应消息的字段集编码，在客户端浏览器中的中文信息仍然会显示"?"乱码。
 ```java   //TestPrintWriter类演示如何使用PrintWriter对象向客户端输出信息
@@ -363,9 +365,9 @@ public class ShowImag extends HttpServlet{
             //当文件输入流中的字节读完后，退出while循环
             if(count<=0)
                 break;
-            os.writer(buffer,0,count);
+            os.writer(buffer,0,count); //向客户输出图像字节信息
         }
-        fis.close();
+        fis.close();  //关闭文件输入流
     }
 }
 ```
@@ -373,10 +375,10 @@ public class ShowImag extends HttpServlet{
 
 ShowImage类使用了请求参数name来获得客户端指定的图像绝对路径；也可以使用相对路径，使用ServleContext接口的getRealPath方法将相对路径转换为绝对路径。
 
-getWrier方法和getOutputStream方法不能同时使用。
+getWrier方法和getOutputStream方法不能同时使用，否则抛出异常。
 
 ## 实例：包含Web资源——RequestDispatcher.include方法
-为了实现代码重用，需要将某些公用的代码和数据放到一个或多个Servlet中，以供其他的Servlet使用。RequestDispatcher.include方法。首先通过getServletContext方法获取ServletContext对象，然后通过ServletContext.getRequestDispatcher方法获取RequestDispatcher对象。
+为了实现代码重用，需要将某些公用的代码和数据放到一个或多个Servlet中，以供其他的Servlet使用。因此专门提供了RequestDispatcher.include方法。首先通过getServletContext方法获取ServletContext对象，然后通过ServletContext.getRequestDispatcher方法获取RequestDispatcher对象。
 ```java      //包含了一个Servlet:IncludedServlet，和一个html页面
 public class IncludingServlet extends HttpServlet{
     @Override
@@ -399,6 +401,8 @@ public class IncludingServlet extends HttpServlet{
 上面的程序包含了两个web资源，映射路径为"/servlet/IncludedServlet"的Servlet类和名为IncldedHtml.html的静态页面。
 
 getRequestDispatcher方法的参数值必须以“/”开头。
+
+
 ```java
 public class IncludedServlet extends HttpServlet{
     @Ovrride
@@ -460,7 +464,7 @@ public class ExploreResponseHeader extends HttpServlet{
     }
 }
 ```
-(1)添加和设置响应消息头——addHeader与setHeader方法
+### 添加和设置响应消息头——addHeader与setHeader方法
 
 addHeader和setHeader方法用于设置HTTP响应消息头的所有字段，定义如下;
 ```java
@@ -469,7 +473,7 @@ public void setHeader(String name,String value);
 ```
 name参数表示响应消息头的字段名，value表示响应消息头的字段值，这两个方法都向响应消息头增加一个字段。
 
-（2）操作整数类型的响应消息头——addIntHeader与setIntHeader方法
+### 操作整数类型的响应消息头——addIntHeader与setIntHeader方法
 
 HttpServletResponse提供两个专门设置整型字段值的方法，定义如下;
 ```java
@@ -478,7 +482,7 @@ public void setIntHeader(String name,int value);
 ```
 这两个方法在设置整型字段值时避免将int类型转换为String类型值的麻烦。
 
-（3）操作时间类型的响应消息头——addHeader与setDateHeader方法
+### 操作时间类型的响应消息头——addHeader与setDateHeader方法
 
 HttpServletResponse提供了两个专门用于设置日期字段值的方法，定义如下：
 ```java
@@ -486,18 +490,30 @@ public void addDateHeader(String name,long date);
 public void setDateHeader(String name,long date);
 ```
 # 四、掌握HttpServletRequest类
+
 在客户端请求某一个Servlet时，Servlet引擎为这个Servlet创建一个HttpServletRequest对象来存储客户端的请求消息，并在调用service方法时将HttpServletRequest对象作为参数传给了service方法。
+
 ## 获取请求行消息
 HttpServletRequest接口中定义了若干的方法来获取请求行中各部分的消息。
+
 ## 获取网络连接消息
 要运行Java Web消息，首先需要在服务端部署Java Web程序，然后才通过客户端连接服务器进行请求；在具体编写程序时，有时需要获取客户端与服务端网络连接的消息。
+
 ## 获取请求头消息
 跟HttpServletResponse相似，类HttpServletRequest也定义了许多方法来操作请求消息中的请求头。HttpServletRequest接口中也定义了一些用于获得请求头消息的方法。
+
 # 五、处理Cookie
+
 Cookie是在浏览器访问某个Web资源时，由Web服务器在HTTP响应消息头中通过Set-Cookie字段发送给浏览器的一组消息。
+
 一个cookie只能表示一个key-value对，由Cookie名和Cookie值组成。
+
 ## 认识操作Cookie的方法
-在Servlet API中，使用java.servlet.http.Cookie类来封装一个Cookie消息；在HttpServletResponse接口中定义了一个addCookie方法来向浏览器发送Cookie消息，也定义了一个getCookies方法来读取浏览器传递过来的Cookie消息。Cookie类中定义了生成和获取Cookie消息的各个属性的方法。
+
+在Servlet API中，使用java.servlet.http.Cookie类来封装一个Cookie消息；
+
+在HttpServletResponse接口中定义了一个addCookie方法来向浏览器发送Cookie消息，也定义了一个getCookies方法来读取浏览器传递过来的Cookie消息。Cookie类中定义了生成和获取Cookie消息的各个属性的方法。
+
 Cookie类只有一个构造方法：public Cookie(String name,String vlaue)
 
 Cookie中其他的常用方法：
@@ -509,7 +525,9 @@ setDomain和getDomain方法：设置和返回当前Cookie的有效域；
 setComment和getComment方法：设置和返回当前Cookie的注释部分；
 setVersion和getVersion方法：设置和返回当前Cookie的协议版本；
 setSecure和getSecure方法;设置和返回当前Cookie是否只能使用安全的协议传输Cookie.
+
 ## 实例：通过Cookie技术读写客户端信息
+
 ```java       //SaveCookie类负责向客户端写入三种Cookie：永久Cookie、临时Cookie和有效时间为0的Cookie.
 public class SaveCookie extends HttpServlet{
     @Override
@@ -654,11 +672,11 @@ public class ReadComplexCookie extends ReadCookie{
 # 六、处理Session
 ## 认识操作Session的方法
 一种将大量数据保存在服务端的技术，并使用SessonID对这些数据进行跟踪，就是Session技术。
-在Servlet中使用HttpSession类来描述Sessin，一个HttpSession对象就是一个Session，使用HttpServletRquest接口的getSession方法可以获得一个HttpSession对象。
+在Servlet中使用HttpSession类来描述Session，一个HttpSession对象就是一个Session，使用HttpServletRquest接口的getSession方法可以获得一个HttpSession对象。
 
 
 ## 创建Session对象
-一个请求只能属于一个Session，但一个Session也可以拥有多个请求。HttpServletRequest接口中定义了一些与Session相关的方法，其中getSessin()方法时HttpServletRequest接口的方法。这个方法用于返回与当前请求相关的HttpSession对象，该方法有两种重载形式：
+一个请求只能属于一个Session，但一个Session也可以拥有多个请求。HttpServletRequest接口中定义了一些与Session相关的方法，其中getSessin()方法======HttpServletRequest接口的方法。这个方法用于返回与当前请求相关的HttpSession对象，该方法有两种重载形式：
 ```java
 public HttpSession getSession();
 public HttpSession getSession(boolean create);
