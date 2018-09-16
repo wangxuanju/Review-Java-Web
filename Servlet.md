@@ -1,3 +1,35 @@
+<!-- GFM-TOC -->
+* [一、编写Java Web的HelloWord程序](#一编写java web的helloword程序)
+* [用MyEclipse工具建立一个Servlet程序——Helloword](#用myeclipse工具建立一个servlet程序——helloword)
+* [二、学习Servlet技术](#二学习servlet技术)
+* [配置Tomcat7服务器的数据库连接池](#配置tomcat7服务器的数据库连接池)
+* [实例：通过数据库连接池连接MySQL数据库](#实例：通过数据库连接池连接mysql数据库)
+* [实例：处理客户端HTTP GET请求——doGet方法](#实例：处理客户端http get请求——doget方法)
+* [处理客户端HTTP POST请求——doPost方法](#处理客户端http post请求——dopost方法)
+* [实例：处理客户端各种请求——service方法](#实例：处理客户端各种请求——service方法)
+* [实例：初始化和销毁Servlet](#实例：初始化和销毁servlet)
+* [实例：输出字符流响应消息——PrintWriter类](#实例：输出字符流响应消息——printwriter类)
+* [实例：输出字节流响应消息——ServletOutputStream类](#实例：输出字节流响应消息——servletoutputstream类)
+* [实例：包含Web资源——RequestDispatcher.include方法](#实例：包含Web资源——requestdispatcher.include方法)
+* [实例：转发Web资源——RequestDispatcher.forward方法](#实例：转发Web资源——requestdispatcher.forward方法)
+* [三、掌握HttpServletResponse类](#三掌握httpservletresponse类)
+* [四、掌握HttpServletRequest类](#四掌握httpservletrequest类)
+* [获取请求行消息](#获取请求行消息)
+* [获取网络连接消息](#获取网络连接消息)
+* [获取请求头消息](#获取请求头消息)
+* [五、处理Cookie](#五处理cookie)
+* [认识操作Cookie的方法](#认识操作cookie的方法)
+* [实例：通过Cookie技术读写客户端信息](#实例：通过cookie技术读写客户端信息)
+* [实例：通过Cookie技术读写复杂数据](#实例：通过cookie技术读写复杂数据)
+* [六、处理Session](#六处理session)
+* [认识操作Session的方法](#认识操作session的方法)
+* [创建Session对象](#创建session对象)
+* [实例：通过Cookie跟踪Session](#实例：通过cookie跟踪session)
+* [实例:通过重写URL跟踪Session](#实例:通过重写url跟踪session)
+* [七、解决Web开发中的乱码问题](#七解决web开发中的乱码问题)
+<!-- GFM-TOC -->
+
+
 # 一、编写Java Web的HelloWord程序
 ##  用MyEclipse工具建立一个Servlet程序——Helloword
 ```java
@@ -190,7 +222,9 @@ public class TestDoPost extends HttpServlet{
     <url-pattern>/servlet/TestDoPost</url-pattern>
 </srvlet-maping>
 ```
+
 为了正确的显示出TestDoPost类的输出文本——处理HTTP POST请求，需要创建访问页面，具体html代码如下：
+
 ```java
 <!--使用<form>通过post方法访问TestDoPost-->
 <form action=".../servlet/TestDoPost" method="post">
@@ -657,7 +691,7 @@ public class SessionServlet extends HttpServlet{
         }
 }
 ```
-## 实例;通过重写URL跟踪Session
+## 实例:通过重写URL跟踪Session
 通过URL发送SessionID,必须要重写URL;HttpServletResponse提供了如下两个方法用于重写URL：
 ```java
 encodeURL方法;用于对所有内嵌在Servlet中的URL进行重写。
