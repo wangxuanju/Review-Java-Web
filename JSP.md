@@ -1,3 +1,33 @@
+<!-- GFM-TOC -->
+* [一、通过MyEclipse工具编写一个JSP程序](#一通过myeclipse工具编写一个jsp程序)
+* [二、JSP运行原理](#二jsp运行原理)
+    * [分析由JSP生成的Servlet代码](#分析由jsp生成的servlet代码)
+    * [JSP静态部分的转换](#jsp静态部分的转换)
+    * [JSP动态部分的转换](#jsp动态部分的转换)
+* [三、JSP基本语法](#三jsp基本语法)
+    * [学习JSP表达式](#学习jsp表达式)
+    * [实现在JSP中嵌入代码](#实现在jsp中嵌入代码)
+    * [JSP表达式语言（EL）](#jsp表达式语言（el）)
+* [四、JSP指令](#四jsp指令)
+    * [JSP指令](#jsp指令)
+    * [JSP指令page](#jsp指令page)
+    * [JSP指令include](#jsp指令include)
+* [五、JSP内置对象](#五jsp内置对象)
+    * [内置对象out](#内置对象out)
+    * [内置对象pageContext](#内置对象pagecontext)
+    * [其他内置对象](#其他内置对象)
+    * [application对象](#application对象)
+* [六、JSP标签](#六jsp标签)
+    * [包含标签<jsp:include>](#包含标签<jsp:include>)
+    * [web资源的扩展名](#web资源的扩展名)
+    * [处理不存在的web资源](#处理不存在的web资源)
+    * [转发标签<jsp:forward>](#转发标签<jsp:forward>)
+    * [传参标签<jsp:param>](#传参标签<jsp:param>)
+    * [创建Bean标签<jsp:useBean>](#创建bean标签<jsp:usebean>)
+    * [设置属性值标签<jsp:setProperty>](#设置属性值标签<jsp:setproperty>)
+    * [获取属性值标签<jsp:getProperty>](#获取属性值标签<jsp:getproperty>)
+* [七、JSP表征标签库](#七jsp表征标签库)
+<!-- GFM-TOC -->
 # 一、通过MyEclipse工具编写一个JSP程序
 当动态Java Web应用中静态内容远多于动态内容时，在Servlet中通过PrintWriter对象或OutputStream对象向客户端输出这些静态内容就显得十分麻烦；所以在Servlet的基础上推出了JSP。
 JSP页面中动态内容都放在<%..%>之间，<%..%>之外的内容都被认为是静态的内容。
@@ -598,16 +628,6 @@ name:<jsp:getProperty property="name" name="myClass"/>
 <!--属性MyClass对象实例的age属性值-->
 age:<jsp:getProperty property="age" name="myClass"/>
 ```
-
-
-
-
-
-
-
-
-
-
 
 
 # 七、JSP表征标签库
