@@ -351,6 +351,93 @@ include指令在引用JSP文件时，按照JSP页面来处理，而include方法
     <jsp:param name="salary" value="<%=3000/1.2%>"/>
 </jsp:include>
 ```
+## 创建Bean标签<jsp:useBean>
+一个创建JavaBean类对象功能的标签——<jsp:useBean>,用于在不使用java代码的前提下创建类的对象实例，语法如下：
+```java
+格式一
+<jsp:useBean id="name" scope="page|request|session|application" typeSpec/>
+格式二
+<jsp:useBean id="name" scope="page|request|session|application" typeSpec>
+标签体
+</jsp:useBean>
+typeSpec::=class="className"|
+class="className" type="typeName|
+beanName="beanName"|<%=expression%>|EL" type="typeName"
+```
+<jsp:userBean>标签的5个属性：
+
+（1）id:表示对象实例名；
+
+（2）scope：表示对象实例的有效范围；
+
+（3）class:要实例化的类名；
+
+（4）beanName:与Class类名类似，beanName属性也是要实例化的类名；
+
+（5）type:要实例化的类的父类名；
+
+### <jsp:userBean>有三种使用方法：
+#### 最简单的方法
+
+```java
+<jsp:useBean id="myDate" class="java.util.Date">
+相当于如下java代码
+<%
+    java.util.Date myDate=new java.util.Date();
+%>
+```
+#### 使用class和type
+```java
+<jsp:useBean id ="myDate" class="java.util.Date" type="Object">
+相当于如下java代码
+<%
+    Object myDate = new java.util.Date();
+%>
+```
+#### 使用beanName和type
+```java
+<jsp:useBean id="myDate" type="Object" beanName="java.util.Date">
+相当于如下java代码
+<%
+    Object myDate = (Object)java.beans.Beans.instantiate(this.getClass().getClassLoader("java.util.Date");
+%>
+```
+注意：beanName属性和type必须成对出现，并且beanName属性和class属性不能同时使用。
+<jsp:useBean>标签还可以有标签体;
+```java
+<!--testPageScope.jsp-->
+<%@page pageEncoding="UTF-8"%>
+<!--保存当前页面域里-->
+<jsp:useBean id="myDate" scope="page" class="java.util.Date">
+这是一个标签体
+</jsp:useBean>
+```
+```java
+<!--testSessionScope.jsp-->
+<%@page pageEncoding="UTF-8"%>
+<!--保存当前页面域里-->
+<jsp:useBean id="myDate" scope="session"calss="java.util.Date">
+这是一个标签体
+</jsp:useBean>
+```
+将scope属性设为page时，<jsp:useBean>标签创建的对象只对当前页面有效，并且<jsp:useBean>标签在创建对象之前，会先在page域里查找是否存在和id属性值同名的对象。如果存在，就不会再创建新的对象实例。当scope属性的值page时，每次刷新页面都会输出标签体。但当scope属性的值为session时，由于刷新页面时仍然位于一个IE窗口，所以session是共享的。
+
+## 设置属性值标签<jsp:setProperty>
+<jsp:setProperty>标签用来设置对象实例的属性值，可以放在<jsp:useBean>的标签体中，也可以单独使用。
+<jsp:setProperty>有四个属性：
+（1）name:对象实例名
+（2）property:对象实例的属性名
+（3）param:URL中的参数名
+（4）value:指定
+
+
+
+
+
+
+
+
+
 
 
 
