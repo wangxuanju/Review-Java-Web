@@ -30,6 +30,7 @@
 <!-- GFM-TOC -->
 # 一、通过MyEclipse工具编写一个JSP程序
 当动态Java Web应用中静态内容远多于动态内容时，在Servlet中通过PrintWriter对象或OutputStream对象向客户端输出这些静态内容就显得十分麻烦；所以在Servlet的基础上推出了JSP。
+
 JSP页面中动态内容都放在<%..%>之间，<%..%>之外的内容都被认为是静态的内容。
 ```java      //JSP小例子
 <%@ page language="java" contendType="text/html;charset=utf-8"
@@ -82,9 +83,12 @@ Tomcat自带一个Servlet
 ```
 从代码中发现，这个servlet实际上是一个专门处理JSP程序的Servlet类，类名为JSPServlet。
 （所以扩展名为jsp的URL都会交给JSPServlet类处理，也就是交由JSP引擎进行处理）
+
 JSP引擎分两步对JSP页面进行处理；首先将JSP页面生成一个Servlet源程序文件，然后将调用Java编译器将这个Servlet源程序文件编译成.class文件，并由Servlet引擎装载并执行这个.class文件。
 （为了提高JSP的执行效率，并不是每次访问JSP都进行编译，只有在第一次访问JSP页面时才会执行这个翻译过程）
+
 JSP页面从运行原理上看是在运行Servlet程序，所以习惯上将同时执行JSP和Servlet的程序称为Servlet容器。
+
 虽然每次访问JSP页面时，JSP引擎都会检查JSP页面和由JSP页面翻译而成的Servlet源文件的生成时间，由于在发布时每次访问JSP页面都要做这些工作导致降低系统性能，因此一般在发布JSP程序时将检查生成时间的功能关闭。
 ```java
 <servlet>
@@ -113,7 +117,7 @@ pageEncoding="UTF-8"%>
 %>
 <html>
     <head>
-    <head>random</title>
+    <title>random</title>
     </head>
     <body>
     第一个随机数：<% out.println(n);%><!--输出第一个随机数-->
@@ -132,7 +136,6 @@ JSP动态部分就是被括在<%..%>中的内容分为三种形式：
 (2)<%=...%>：通过print方法将“=”后面的内容输出到客户端。
 
 (3)JSP指令：<%@page ...%>就是一个JSP的page指令。按照指令类型和它的属性翻译成相应的Java代码。
-
 
 
 注意：静态内容使用write方法输出到客户端；动态内容使用print方法向客户端输出。区别是:write方法只能输出字符串、字符数组和int类型的数据；而print方法可以将任何类型的数据转换为字符串输出。
@@ -164,7 +167,7 @@ JSP表达式可以在JSP页面中嵌入java代码，但所嵌入的java代码只
             //定义一个Random对象
             java.util.Random rand = new java.util.Random();
             //循环生成10个随机数，新输出到客户端
-            for(int i=0;i<10;i=+）{
+            for(int i=0;i<10;i++）{
                 out.print(rand.nextInt(1000)); //输出1000以内的随机整数
                 out.print("<br>");
             }
@@ -176,7 +179,7 @@ JSP表达式可以在JSP页面中嵌入java代码，但所嵌入的java代码只
 
 (2)一个JSP页面可以在任意位置使用<%..%>插入java代码，<%..%>可以有任意多个；
 
-(3)每一个<%..%>中的内容和JSP页面中的一个或多个<%..%>中的内容组合起来必须完整（甚至可以将一条java语句分别写在多个<%..%>中）；
+(3)每一个<%..%>中的内容和JSP页面中的一个或多个<%..%>中的内容组合起来必须完整（甚至可以将一条java语句分别写在多个<%..%>中）;
 
 ## JSP表达式语言（EL）
 
