@@ -78,8 +78,39 @@ public class HelloServlet extends HttpServlet{
 }
 ```
 ### ServletRequest接口
+在Servlet接口中的service(ServletRequest req,ServletResponse res)方法中有一个ServletRequest类型的参数；ServletRequest类表示来自客户端的请求。
 
+ServletRequest接口提供了一系列用于读取客户端的请求数据的方法。
 
+### HttpServletRqsponse接口
+HttpServletRequest接口时ServletRequest接口的子接口；HttpServlet类的重载service()方法及doGet()和doPost()等方法都有一个HttpServletRequest类型的参数：
+```java
+protected void service(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException
+```
+HttpServletRequest接口提供了用于读取HTTP请求中的相关信息的方法：
+
+getContextPath():返回客户端所请求的web应用的URL入口。
+
+getCookies()：返回HTTP请求中的所有Cookie。
+
+getHeader(String name):返回HTTP请求头部的特定项。
+
+getHeaderNames()：返回一个Enumeration对象，它包含了HTTP请求头部的所有项目名。
+
+getMethods()：返回HTTP请求方式。
+
+getRequestURI():返回HTTP请求的头部的第一行中的URI.
+
+getQueryString()：返回HTTP请求中的查询字符串，即URL中的“？”后面的内容。
+
+### ServletResponse接口
+在Servlet接口的service(ServletRequest   req,ServletResponse res)方法中有一个ServletResonse类型的参数。Servlet通过ServletResponse对象生成响应结果。当Servlet容器接收到客户端要求访问特定的Servlet的请求时，容器会创建一个ServltResponse对象，并把它作为参数传递给Servlet的service()方法。
+
+ServletResponse的getOutputStream()方法返回一个ServletRsponse()方法返回一个ServletOutputStream对象，Servlet可以利用ServletOutputStream来输出二进制的正文数据。ServletResponse的getWriter()返回一个PrintWriter对象，ServletResponse的getWriter()方法返回一个PrintWriter对象，Servlet可以利用PrintWriter来输出字符串形式的正文数据。
+
+Servlet通过ServletResponse对象的setContentLength()、setContendType()和setCharacterEncoding()来分别设置响应正文的长度、MIME类型和字符编码。
+
+如果要设置响应正文的MIME类型和字符编码，必须先调用ServletResponse对象的setContentType()和setCharacterEncoding()方法，然后再调用ServletResponse的getOutputStream()或getWriter()方法，或者提交缓冲区内的正文数据。只有满足这样的操作顺序，所做的设置才能生效。
 
 
 # 二、Java Web应用的生命周期
