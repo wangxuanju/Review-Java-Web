@@ -166,15 +166,212 @@ Servlet可以访问由Servlet容器提供的ServletContext/ServletRequest/Servle
 ```
 隐含对象的固定引用变量，是与JSP对应的Servlet类的服务方法中的方法参数或局部变量。
 # 三、JSP的生命周期
+Servlet容器必须先把JSP编译成Servlet类，然后才能运行它；JSP的生命周期包含以下阶段：
+```java
+解析阶段：Servlet容器解析JSP文件的代码；
+翻译阶段;Servlet容器把JSP文件翻译成Servlet源文件；
+编译阶段：Servlet容器编译Servlet源文件，生成Servlet类；
+初始化阶段：加载与JSP对应的Servlet类，创建其实例，并调用它的初始化方法；
+运行时阶段：调用与JSP对应的Servlet实例的服务方法；
+销毁阶段：调用与JSP对应的Servlet实例的销毁方法，然后销毁Servlet实例。
+```
+在JSP的生命周期中，解析、翻译和编译是其特有的阶段，这三个阶段仅仅发生在以下场合：
+
+(1)JSP文件被客户端首次请求访问；
+
+（2）JSP文件被更新；
+
+（3）与JSP文件对应的Servlet类的类文件被手工删除；
+
+初始化、运行时和销毁阶段则是JSP和Servlet都具有的阶段。
+
+
+在jspPage接口中定义了jspInit()和jspDestory()方法，它们的作用与Servlet接口的init()和destory()方法相同。
+例子中life.jsp中定义了jspInit()和jspDestory()方法；
+```java
+<%@ page contentType="text/html; charset=GB2312" %>
+<html><head><title>life.jsp</title></head><body>
+
+<%! //life.jsp定义了三个用于跟踪JSP的生命周期的实例变量。
+  private int initVar=0;   //统计jspIntit()方法被调用的次数，即JSP被初始化的次数。
+  private int serviceVar=0; //统计jspService()方法被调用的次数，即JSP响应客户的请求的次数。
+  private int destroyVar=0; //统计serviceDestory()被调用的 次数，即JSP被销毁的次数。
+%>
+  
+<%!
+  public void jspInit(){
+    initVar++;
+    System.out.println("jspInit(): JSP被初始化了"+initVar+"次");
+  }
+  public void jspDestroy(){
+    destroyVar++;
+    System.out.println("jspDestroy(): JSP被销毁了"+destroyVar+"次");
+  }
+%>
+
+<%
+  serviceVar++;
+  System.out.println("_jspService(): JSP共响应了"+serviceVar+"次请求");
+
+  String content1="初始化次数 : "+initVar;
+  String content2="响应客户请求次数 : "+serviceVar;
+  String content3="销毁次数 : "+destroyVar;
+%>
+
+<h1><%=content1 %></h1>
+<h1><%=content2 %></h1>
+<h1><%=content3 %></h1>
+
+</body></html>
+
+```
 
 # 四、请求转发
+JSP采用<jsp:forward>标签来实现请求转发的，转发的目标组件可以为HTML文件、JSP文件或者Servlet.<jsp:forward>的语法为
+```java
+ <jsp:forward page="转发的目标组件的绝对URL或相对URL"/>
+```
+JSP源文件和目标组件共享HttpServletRequest对象和HttpServletResponse对象；Servelt源组件调用RequestDispatcher.forward(request,response)方法进行请求转发之后的代码也会被执行。
+```java  //sorce.jsp把请求转发给target.jsp.
+<html><head><title>Source Page</title></head>
+<body>
+	<p>
+		This is output of source.jsp before forward
+	</p>
+        <jsp:forward page="target.jsp" />
+        <p>
+		This is output of source.jsp after forward
+	</p>
+</body></html>
 
+
+<html><head><title>Target Page</title></head>
+<body>
+	<p>
+		hello, <%=request.getParameter("username")%>
+	</p>
+</body></html>
+```
+由于sorce.jsp将请求转发给了target.jsp，所以source.jsp中的所有数据输出都无效；此外target.jsp和source.jsp共享同一个HttpServletRequest对象，因此target.jsp可以通过request.getParameter("username")方法读取客户端提供的username请求参数。
+
+<jsp:forward>标签中的page属性既可以为相对路径，也可以为绝对路径；
+
+转发源文件还可以通过<jsp:param>标签来转发目标组件传递额外的请求参数。
+```java
+<html><head><title>Target Page</title></head>
+<body>
+	<jsp:forward page="target.jsp">
+      <jsp:param name="username" value="Tom" />
+      <jsp:param naem="password" value="1234"/>
+  </jsp:forward>
+</body></html>
+```
+在target.jsp中可以通过request.getParameter("username")的方式来读取source1.jsp传过来的username请求参数；
+
+<jsp:param>标签除了可以嵌套在<jsp:forward>标签中，还可以嵌套在<jsp:include>标签中。
 # 五、包含
+用include指令来包含其他文件的方法，include指令的语法为：
+```java
+<%@ include file="被包含组件的绝对URL和相对的URL"%>
+```
+另外还可以用include标签来包含其他文件，include标签的语法为;
+```java
+<jsp:include page="被包含组件的URL的绝对URL或相对的URL"/>
+```
+include指令用于静态包含，而include标签用于动态包含；无论是静态包含还是动态包含，源组件和被包含的组件都共享请求范围内的共享数据。
 
+## 静态包含
+```java
+sin.jsp is including content.jsp
+<% int var=1;
+    request.setAttribute("username","Tom");
+%>
+<%@ include file="contend.jsp" %>
+<p>sin.jsp is doing something else.
+
+
+<!--contend.jsp-->
+<p>
+Output from content.jsp:
+<br>
+var=<%=var %>
+<br>
+username=<%=request.getAttribute("username")%>
+```
+## 动态包含
+动态包含发生在运行JSP源组件阶段，动态包含的目标组件可以为HTML文件、JSP文件或者Servlet；如果组件为JSP，Servlet容器会在运行JSP源组件的过程中，运行与JSP目标组件对应的Servlet的服务方法。JSP目标组件生成响应结果被包含到JSP源组件的响应结果中。
+
+<jsp:include>标签还有一个flush属性，可选值为true和false；如果flush属性为true，就表示源组件在包含目标组件之前，先把已经生成的响应正文提交给客户。flush属性的默认值为false.
+```java
+    <jsp:include page="content.jsp" flush="true" />
+```
+## 混合使用静态包含和动态包含
+静态包含通常用来包含不会发生变化的网页内容，而动态包含通常用来包含会发生变化的网页内容。
 # 六、JSP异常处理
+JSP在运行时也有可能抛出异常；在发生异常的场合，可以通过下面的指令将请求转发给另一个专门处理异常的网页。
+<%@ page errorPage="errorpage.jsp"%>
+以上errorpage.jsp是一个专门负责处理异常的网页；在这个处理异常的网页中，应该通过如下语句将该网页声明为异常处理网页：
+<%@ page isErrorPage="true"%>
+处理异常的网页可以直接访问exception隐含对象，获取当前异常的信息，例如：
+```java
+<p>
+    错误原因为:<% exception.printStackTrace(new PrintWriter(out));%>
+</p>
+```
+抛出异常的JSP文件与处理异常的JSP文件之间为请求转发关系，因此它们共享请求范围内的共享数据。
+```java
+<%@ page contentType="text/html; charset=GB2312" %>
+<%@ page errorPage="errorpage.jsp" %>
 
+<html><head><title>sum.jsp</title></head>
+<body>
+    <%!
+            private int toInt(String num){
+              return Integer.valueOf(num).intValue();
+            }
+    %>
+    <%
+        int num1=toInt(request.getParameter("num1"));
+        int num2=toInt(request.getParameter("num2"));
+    %>
+
+    <p>
+         运算结果为:<%=num1%>+<%=num2%>=<%=(num1+num2)%>
+    </p>
+</body></html>
+
+
+<%@ page contentType="text/html; charset=GB2312" %>
+<%@ page isErrorPage="true" %>
+<%@ page import="java.io.PrintWriter" %>
+
+<html><head><title>Error Page</title></head>
+<body>
+
+	<p>
+		你输入的参数（num1=<%=request.getParameter("num1")%>,
+                num2=<%=request.getParameter("num2")%>）有错误
+	</p>
+	<p>
+		错误原因为：<% exception.printStackTrace(new PrintWriter(out));%>
+	</p>
+</body></html>
+```
 # 七、发布JSP
+在发布Servelt时，必须在web.xml文件中加入<servlet>和<servelt-mapping>元素，其中<servlet-mapping>元素用来为Servlet映射URL；事实上可以为JSP配置<servlet>和<servlet-mapping>元素，从而为JSP映射URL。
+```java
+  <servlet>
+      <servlet-name>hi</servlet-name>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>hi</servlet-name>
+      <url-pattern>/hi</url-pattern>
+  </servlet-mapping> 
+```
 
 # 八、预编译JSP
+当JSP文件被客户端第一次请求访问时，Servlet容器先把JSP文件编译为Servlet类后才能运行，这一过程延长客户端等待响应结果的时间；因此可以对JSP进行预编译。
+
+JSP规范为JSP规定了一个特殊的请求参数jsp_precompile，它的取值可以为true或false.如果请求参数jsp_precompile的值为true，那么Servlet容器仅仅对客户端请求的JSP文件进行预编译，即把JSP文件转换为Servlet类，但不会进行Servlet.
 # 九、PageContext抽象类
 
