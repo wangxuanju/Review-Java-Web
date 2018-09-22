@@ -61,7 +61,9 @@ public class HelloServlet extends HttpServlet {
 （2）如果与JSP文件对应的Servlet还不存在，就解析文件系统中的JSP文件，把它翻译为Servlet源文件，接着把源文件编译成Servelt类，然后再初始化并运行
 Servlet。（一般把JSP文件翻译成源文件及编译源文件的过程仅在客户端首次调用JSP文件时发生）
 ```java
-    <%=request.getParameter("username")%>//用于向网页中输出request.getParamter("username"))方法的返回值，与源代码中对应是        out.print(request.getParameter("username"));
+    <%=request.getParameter("username")%>//用于向网页中输出request.getParamter("username"))方法的返回值，与源代码中对应是 
+    
+    out.print(request.getParameter("username"));
 ```
 JSP技术的出现，使Web应用中HTML文档和业务逻辑代码有效分离成为可能；JSP负责动态生成HTML文档，业务逻辑由其他可重用的组件，如JavaBean或其他的Java程序来实现。
 
@@ -104,7 +106,7 @@ JSP声明用于与JSP对应的Servlet类的成员变量和方法，语法如下�
 ```
 每个JSP声明只在当前JSP文件中有效，如果希望在多个JSP文件中都包含这些声明，可以把这些声明放到一个单独的JSP文件中，然后再其他JSP文件中用include指令把这个JSP文件包含进来。
 ## Java程序片段
-
+在<%和%>标记间直接嵌入任何有效的java程序代码，这种嵌入
 
 
 
