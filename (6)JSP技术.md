@@ -144,10 +144,27 @@ java表达式除了可以直接插入到模板文本中，也可以作为某些J
     <jsp:setProperty name="myPageBean" property="count" value="<%=myPageBean.getCount()+1 %>" />
 ```
 ## 隐含对象
+Servlet可以访问由Servlet容器提供的ServletContext/ServletRequest/ServletResponse等对象；对于JSP程序片段，这些对象称为隐含对象，每个对象都被固定的引用变量引用。JSP不需要做任何变量声明，就可以直接通过固定的引用变量来引用这些对象。
 
-
-
-
+例如：在JSP中可以直接通过request变量来获取HTTP请求中的请求参数。
+```java
+<%
+    String username=request.getParameter("username");
+    out.print(username);
+%>
+```
+以上request和out变量分别引用HttpServletRequest和JspWriter隐含对象。
+与以下代码是等价的：
+```java
+<%=username %>
+```
+例如:通过ServletContext隐含对象向Web应用范围内存放一个username属性，application变量引用ServletContext隐含对象：
+```java
+<%
+    application.setAttribute("username","Tom");
+%>
+```
+隐含对象的固定引用变量，是与JSP对应的Servlet类的服务方法中的方法参数或局部变量。
 # 三、JSP的生命周期
 
 # 四、请求转发
