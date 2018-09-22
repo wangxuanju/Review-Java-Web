@@ -106,7 +106,44 @@ JSP声明用于与JSP对应的Servlet类的成员变量和方法，语法如下�
 ```
 每个JSP声明只在当前JSP文件中有效，如果希望在多个JSP文件中都包含这些声明，可以把这些声明放到一个单独的JSP文件中，然后再其他JSP文件中用include指令把这个JSP文件包含进来。
 ## Java程序片段
-在<%和%>标记间直接嵌入任何有效的java程序代码，这种嵌入
+在<%和%>标记间直接嵌入任何有效的java程序代码；如果在page指令中没有指定method属性，那么程序片段默认为与JSP对应的Servlet类的service()方法中的代码块。
+```java  //if语句由三段“<%”和"%>"代码构成，分段的if语句可以控制网页的输出结果。
+<%
+    String gendar="female";
+    if(gender.equals("female"){
+%>
+    she is a girl;
+<%  }else{%>
+    she is a girl too;
+<% } %>
+````
+以上JSP代码等价于Servlet的service()方法：
+```java
+public void service(HttpServlet request,HttpServletResponse response)throws ServleetException,IOException{
+    PrintWriter out=response.getWriter();
+    String gendar="female"; //局部变量
+    if(gender.equals("female")
+        out.print("she is a girl");
+    else
+        out.print("he is a boy");
+}
+```
+## java表达式
+java表达式的标记为"<%="和"%>"；使用该标记，那么它能把表达式的值输出到网页上。表达式的int或float类型的值都自动转换成字符串再进行输出。
+```java
+<%=hitcount++%>
+```
+JSP中实例变量和局部变量的区别：
+
+对应实例变量，每个JSP实例都有一个实例变量，由于在Servlet容器中，一个JSP文件只对应一个JSP实例。
+
+局部变量在一个方法中定义，当Servlet容器每次调用JSP的服务方法时，Java虚拟机会为局部变量分配内存，从而创建一个新的局部变量；当这个方法执行完毕后，java虚拟机就会消耗这个局部变量。
+
+java表达式除了可以直接插入到模板文本中，也可以作为某些JSP标签的属性的值：
+```java
+    <jsp:setProperty name="myPageBean" property="count" value="<%=myPageBean.getCount()+1 %>" />
+```
+## 隐含对象
 
 
 
