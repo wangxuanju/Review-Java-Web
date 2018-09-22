@@ -374,4 +374,22 @@ JSP在运行时也有可能抛出异常；在发生异常的场合，可以通�
 
 JSP规范为JSP规定了一个特殊的请求参数jsp_precompile，它的取值可以为true或false.如果请求参数jsp_precompile的值为true，那么Servlet容器仅仅对客户端请求的JSP文件进行预编译，即把JSP文件转换为Servlet类，但不会进行Servlet.
 # 九、PageContext抽象类
+JSP APi提供了一个实用的类：javax.servlet.jsp.PageContext抽象类，它继承了javax.servlet.jsp.JspContext。
+## 向各种范围内存取属性的方法
+在PageContext类中提供了一组用于向各种范围内存取属性的方法。
 
+
+## 用于获得由Servelt容器提供的其他对象的引用的方法
+PageContext类的以下方法用于获得由Servelt容器提供的ServletContext/HttpSession/ServletRequest/ServletResponse等对象。
+getPage()：返回当前JSP对应的Servlet实例；
+getRequest()：返回ServletRequest对象；
+getResponse():返回ServletRsonse对象；
+getServletConfig()：返回ServletConfig对象；
+getServletContext()：返回ServletContext对象；
+getSession()：返回HttpSession对象；
+getOut()：返回一个用于输出响应正文的JspWriter对象。
+## 用于请求转发和包含的方法
+PageContext类的以下方法用于请求转发和包含：
+forward(String relativeUrlPath):用于把请求转发给其他web组件；
+include(String relativeUrlPath):用于包含其他Web组件；
+在JSP文件中可以用专门的JSP标记（<jsp:forward>和<jsp:include>）来进行请求转发和包含操作。
