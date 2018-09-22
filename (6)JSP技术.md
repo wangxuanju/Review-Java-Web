@@ -67,6 +67,47 @@ JSP技术的出现，使Web应用中HTML文档和业务逻辑代码有效分离�
 
 JSP本质上是Servlet,JSP可以访问Servelt API中的接口和类，此外JSP还可以访问JSP API中的接口和类。
 # 二、JSP语法
+JSP语法的特点实尽快能的用标记来取代JAVA代码，使整个JSP文件在形式上不像java代码，而像标记文档。
+### servlet和JSP对比
+```java
+//引入类
+import java.io.*;  //servlet用法
+import java.util.Hashtable;
+<%@ page import="java.io.*;java.util.Hashtable"%>//JSP用法
+//在Servlet类中，通过以下方式设置响应头正文的类型
+response.setContentType("text/html;charset=GB2312");//servlet用法
+<%@ page contendType="text/html;charset=GB2312"%>//JSP用法
+```
+## JSP指令
+JSP指令用来设置和整个网页相关的属性，一般语法格式如下：
+```java
+<%@ 指令 属性="值" %>
+1 page指令——指定所使用的编程语言、与JSP对应的Servlet所实现的接口、所扩展的类及导入的软件包等，语法格式如下：
+<%@ page 属性1="值1" 属性2="值2"%>
+2 include指令
+通过include指令来包含其他文件的内容，被包含的文件可以是JSP文件或HTML文件，提高了代码的重用性，避免重复代码，提供效率，语法如下：
+<%@ include file="目录组件的绝对或相对URL"%>
+3 JSP声明
+JSP声明用于与JSP对应的Servlet类的成员变量和方法，语法如下：
+<%! declaration;[declaration]..%>
+```java
+<%! int v1=0;%>
+<%! int v2,v3,v4;%>      //实例变量
+<%! String v5="hello";
+    static int v6;       //静态变量
+%>
+<%!
+    public String amethod(int i){  //实例方法
+        if(i<3)return "i<3";
+        else return "i>3";
+   }
+```
+每个JSP声明只在当前JSP文件中有效，如果希望在多个JSP文件中都包含这些声明，可以把这些声明放到一个单独的JSP文件中，然后再其他JSP文件中用include指令把这个JSP文件包含进来。
+## Java程序片段
+
+
+
+
 
 # 三、JSP的生命周期
 
