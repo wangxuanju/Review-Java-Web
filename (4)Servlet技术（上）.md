@@ -263,13 +263,96 @@ public class ContextTesterServlet extends HttpServlet {
   }
 }
 ```
+# 二、Servlet的生命周期
+JavaWeb应用的生命周期由Servlet容器来控制；Servlet的生命周期可以分为三个阶段：初始化阶段、运行时阶段和销毁阶段；在javax.servlet.Servlet接口中定义了3个方法：init()、service()和destory()。
 
-# 二、Java Web应用的生命周期
+## 初始化阶段
+Servlet的初始化阶段包括以下四个步骤：
 
-# 三、Servlet的生命周期
+（1）加载Servlet类，把它的Class文件中的数据读入到内存中；
 
-# 四、ServletContext与Web应用范围
+（2）创建ServletConfig对象，ServletConfig对象包含了特定Servlet的初始化配置信息；
 
-# 五、Servlet的服务方法
+（3）创建Servlet对象；
 
-# 六、防止页面被客户端访问
+（4）调用Servlet对象的init(ServletConfig config)方法。
+
+在下面两种情况之一，Servlet会进入初始化阶段：
+
+（1）当前web应用处于运行时阶段，特定Servlet被客户首次请求访问。
+
+（2）如果在web.xml文件中为一个Servlet设置了<load-on-startup>元素，那么当Servlet容器启动Servlet所属的Web应用时，就会初始化这个Servlet.
+```java
+<servlet>  //其中Servlet1和Servlet2的<load-on-startup>的值为1和2；当Servlet容器启动当前web应用时,Servelt1被第一个初始化，Servlet2第二个初始化
+<servlet-name>servlet1</servlet-name>
+<servlet-class>Servlet1</servlet-class>
+<load-on-startup>1</load-on-startup>    
+</servlet>
+<servlet>
+<servlet-name>servlet2</servlet-name>
+<servlet-class>Servlet2</servlet-class>
+<load-on-startup>2</load-on-startup>
+</servlet>
+<servlet> //没有配置<load-on-startup>元素，当Servlet容器启动当前web应用时，Servlet不会被初始化，只有当客户端首次请求访问ServletX时，它才会初始化
+<servlet-name>servletX</servlet-name>
+<servlet-class>ServletX</servlet-class>
+</servlet>
+```
+## 运行时阶段
+这个阶段Servlet可以随时响应客户端的请求；当Servlet容器接收到要求访问特定Servlet的客户请求，Servlet容器会创建针对这个请求的ServeltRequest对象和ServletResponse对象，然后调用相应的Servlet对象的service()方法。service()方法从ServletRequest对象中获得客户请求信息并处理该请求，再通过ServletResponse对象生成响应结果。
+
+## 销毁阶段
+当web应用被终止时，Servlet容器会先调用web应用中所有的Servlet对象的destory()方法，然后再销毁这些Servlet对象。
+
+此外容器还会销毁与Servlet对象关联的Servlet对象关联的ServletConfig对象。
+
+## 演示Servlet的生命周期的范例
+Servlet的生命周期中，Servlet的初始化和销毁都只会发生一次；因此init()方法和destory()方法只会被Servelt容器调用一次，而Service()方法可能会被Servelt容器调用多次，这取决于客户端请求访问Servlet的次数。
+```java
+import java.io.*;
+import javax.servlet.*;
+
+public class LifeServlet extends GenericServlet{
+  private int initVar=0;        //统计init()方法被调用的次数
+  private int serviceVar=0;    //统计service()方法被调用的次数
+  private int destroyVar=0;    //统计destory()方法被调用的次数
+  private String name;
+  
+  public void init (ServletConfig config)throws ServletException{
+    super.init(config);
+    name=config.getServletName();
+    initVar++;
+    System.out.println(name+">init(): Servlet被初始化了"+initVar+"次");
+  }
+  public void destroy(){
+    destroyVar++;
+    System.out.println(name+">destroy(): Servlet被销毁了"+destroyVar+"次");
+  }
+  public void service(ServletRequest request,
+		ServletResponse response)
+		throws IOException ,ServletException{
+    serviceVar++;
+    System.out.println(name+">service(): Servlet共响应了"+serviceVar+"次请求");
+
+    String content1="初始化次数 : "+initVar;
+    String content2="响应客户请求次数 : "+serviceVar;
+    String content3="销毁次数 : "+destroyVar;
+
+    response.setContentType("text/html;charset=GB2312");
+
+    PrintWriter out = response.getWriter();
+    out.print("<html><head><title>LifeServlet</title>");
+    out.print("</head><body>");
+    out.print("<h1>"+content1 +"</h1>");
+    out.print("<h1>"+content2 +"</h1>");
+    out.print("<h1>"+content3 +"</h1>");
+    out.print("</body></html>");
+    out.close();
+  }
+}
+```
+# 三、ServletContext与Web应用范围
+
+# 四、Servlet的服务方法
+
+# 五、防止页面被客户端访问
