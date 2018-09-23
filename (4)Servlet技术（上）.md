@@ -370,7 +370,14 @@ public class LifeServlet extends GenericServlet{
 
 
 # 四、Servlet的服务方法
+Servlet接口的service()方法完整定义如下：
+```java
+public void service(ServletRequest req,ServletResponse res)throws ServletException,java.io.IOException
+```
+ServletException:表示当前Servlet进行常规操作时出现的异常；
+IOException：表示当Servlet进行IO操作时出现的异常；
 
+Servlet的service()方法抛出的异常由Servlet容器捕获，Servlet容器在捕获到异常后，会向客户端发送相应的错误信息。
 # 五、防止页面被客户端访问
 浏览器端的缓存技术适用于保存服务器端的静态网页，以及不包含敏感数据的网页；当网页包含随时更新的动态内容和敏感数据，服务器不希望网页被客户端缓存。
 服务器端的HttpServlet可以通过设置特定HTTP响应头来禁止客户端缓存网页，以下示范代码的response变量引用HttpServletResonse对象;
