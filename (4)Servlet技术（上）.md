@@ -112,6 +112,157 @@ Servlet通过ServletResponse对象的setContentLength()、setContendType()和set
 
 如果要设置响应正文的MIME类型和字符编码，必须先调用ServletResponse对象的setContentType()和setCharacterEncoding()方法，然后再调用ServletResponse的getOutputStream()或getWriter()方法，或者提交缓冲区内的正文数据。只有满足这样的操作顺序，所做的设置才能生效。
 
+### HttpServletResponse接口
+HttpServletResponse接口是ServletResponse的子接口，HttpServlet类的重载service()方法及doGet()和doPost()等方法都有一个HttpServletResponsse类型的参数：
+```java
+    protected void service(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException
+```
+addHeader(int sc):向客户端发送一个代表特定错误的HTTP响应状态代码；
+
+addHeader(int sc,String msg):向客户端发送一个代表特定错误的HTTP响应状态代码，并且发送具体的错误信息；
+```java
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+
+public class HelloServlet extends HttpServlet {
+  /** 响应客户请求*/
+  public void doGet(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException, IOException {
+    //获得username请求参数 
+    String username=request.getParameter("username");
+    
+    /*字符编码转换。HTTP请求的默认字符编码为ISO-8859-1，如果请求中包含中文，需要把
+    它转换为GB2312中文编码。*/
+    if(username!=null)
+      username=new String(username.getBytes("ISO-8859-1"),"GB2312");
+          
+    if(username==null){
+      //仅仅为了演示response.sendError()的用法。
+      response.sendError(response.SC_FORBIDDEN);
+      return;
+    }
+
+    //设置HTTP响应的正文的MIME类型及字符编码
+    response.setContentType("text/html;charset=GB2312");
+   
+    /*输出HTML文档*/
+    PrintWriter out = response.getWriter();
+    out.println("<html><head><title>HelloServlet</TITLE></head>");
+    out.println("<body>");
+    out.println("你好: "+username);
+    out.println("</body></html>");
+     
+    System.out.println("before close():"+response.isCommitted()); //false
+    out.close(); //关闭PrintWriter
+    System.out.println("after close():"+response.isCommitted());  //true
+  }
+}
+HelloServlet类的service()方法最后调用PrintWriter对象的close()方法关闭底层输出流，该方法在关闭输出流之前先把缓冲区内的数据提交到客户端。
+```java   //以下三种设置HTTP响应正文的MIME类型及字符编码的方式是等价的
+//方式1
+response.setContentType("text/html;charset=GB2312");
+//方式2
+response.setContentType("text/html");
+response.setCharacterEncoding("GB2312");
+//方式3
+response.setHeader("content-type","text/html;charset=GB2312");
+```
+### ServletConfig接口
+Servlet接口的init(ServletConfig config)方法有一个ServletConfig类型的参数。
+
+当Servlet容器初始化一个Servlet对象时，会为这个Servlet对象创建一个ServletConfig对象。在ServletConfig对象包含了Servlet的初始化参数信息。Servlet容器在调用Servlet对象的init(ServletConfig config)方法时，会把ServletConfig对象作为参数传给Servlet对象，init(ServletConfig config)方法会使得当前Servlet对象与ServletConfig对象之间建立关联关系。
+
+在ServletConfig接口中定义了以下方法：
+
+getInitParameter(String name)：根据给定的初始化参数名，返回匹配的初始化参数值；
+
+getInitParameterNames():返回一个Enumeration对象，里面包含了所有的初始化参数名；
+
+在web.xml文件中设置一个Servlet时，可以通过<init-param>元素来设置初始化参数。
+```java
+<servlet>
+    <servlet-name>Font</servlet-name>
+    <servlet-class>mypack.FontServlet</servlet-class>
+    <init-param>                 // <init-param>元素的<param-name>子元素设定参数名，<param-value>子元素设定参数值。
+        <param-name>color</parm-name>
+        <param-value>blue</param-value>
+    </int-param>
+    <init-param>
+        <param-name>size</param-name>
+        <param-value>15</param-value>
+    </init-parm>
+</servlet>
+```
+HttpServlet类继承GenericServlet类，而GenericServlet类实现了ServletConfig接口，因此HttpServlet类或GenericServlet类及子类都可以直接调用ServletCongfig接口中的方法。
+```java          //演示了ServletConfig接口的用法
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+
+public class FontServlet extends HttpServlet {
+  /** 响应客户请求*/
+  public void doGet(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException, IOException {
+    //获得word请求参数 
+    String word=request.getParameter("word");
+    if(word==null)word="Hello";
+    
+    //读取初始化参数
+    String color=getInitParameter("color");
+    String size=getInitParameter("size");
+    System.out.println("servletName: "+getServletName());
+
+    //设置HTTP响应的正文的MIME类型及字符编码
+    response.setContentType("text/html;charset=GB2312");
+   
+    /*输出HTML文档*/
+    PrintWriter out = response.getWriter();
+    out.println("<html><head><title>FontServlet</TITLE></head>");
+    out.println("<body>");
+    out.println("<font size='"+size+"' color='"+color+"'>"+word+"</font>");
+    out.println("</body></html>");
+     
+    out.close(); //关闭PrintWriter
+  }
+}
+```
+### ServletContext接口
+ServletContext是Servlet与Servlet容器之间直接通信的接口；Servlet容器在启动一个Web应用的时候，会为它创建一个ServletContext对象；每个web应用都有唯一的ServletContext对象，可以把ServletContext对象形象的理解为web应用的总管家。
+
+在ServletConfig接口中定义了getServletContext()方法；在HttpServlet类或GenericServlet类及子类中都可以直接调用getServletContext()方法，从而得到当前web应用的ServletContext对象。
+```java
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.*;
+
+public class ContextTesterServlet extends HttpServlet {
+  /** 响应客户请求*/
+  public void doGet(HttpServletRequest request,HttpServletResponse response)
+    throws ServletException, IOException {
+    //获得ServletContext对象
+    ServletContext context=getServletContext(); 
+
+    //设置HTTP响应的正文的MIME类型及字符编码
+    response.setContentType("text/html;charset=GB2312");
+   
+    /*输出HTML文档*/
+    PrintWriter out = response.getWriter();
+    out.println("<html><head><title>FontServlet</TITLE></head>");
+    out.println("<body>");
+    out.println("<br>Email: "+context.getInitParameter("emailOfwebmaster"));//用于读取初始化参数的值；
+    out.println("<br>Path: "+context.getRealPath("/WEB-INF"));
+    out.println("<br>MimeType: "+context.getMimeType("/WEB-INF/web.xml"));
+    out.println("<br>MajorVersion: "+context.getMajorVersion()); 
+    out.println("<br>ServerInfo: "+context.getServerInfo()); 
+    out.println("</body></html>");
+    
+    //输出日志
+    context.log("这是ContextTesterServlet输出的日志。"); //调用context.log()来输出日志；
+    out.close(); //关闭PrintWriter
+  }
+}
+```
 
 # 二、Java Web应用的生命周期
 
