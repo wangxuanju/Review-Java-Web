@@ -1,6 +1,6 @@
 <!-- GFM-TOC -->
 * [一、Servlet&nbsp;API](*一servlet&nbsp;api)
-    * [Servlet&nbsp;API ](*servlet&nbsp;api)
+    * [Servlet&nbsp;API](*servlet&nbsp;api)
 * [二、Servlet的生命周期](*二servlet的生命周期)
     * [初始化阶段](*初始化阶段)
     * [运行时阶段](*运行时阶段)
