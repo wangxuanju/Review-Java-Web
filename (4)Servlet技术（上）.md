@@ -352,24 +352,75 @@ public class LifeServlet extends GenericServlet{
 }
 ```
 # 三、ServletContext与Web应用范围
+Servlet容器在启动一个Web应用时，会为它创建唯一的ServletContext对象；当Servlet容器终止一个web应用时，就会销毁它的ServletContext对象。
 
+在ServletContext接口中常用的用于存取共享数据的方法：
+setAttribute(String name,Object object):向web应用范围内存入共享数据；
+removeAttribute(String name)：根据参数给定的属性名，从web应用范围内删除匹配的共享数据；
+getAttribute(String name)：根据参数给定的属性名，返回web应用范围内匹配的共享数据；
+## 在web应用范围内存放共享数据的范例
+介绍一个向web应用存放共享数据的范例；
+```java
+public class Counter{
+  private int count; //计数值
+  public Counter(){
+    this(0);
+  }
+  public Counter(int count){
+    this.count=count;
+  }
+  public void setCount(int count){
+    this.count=count;
+  }
+  public int getCount(){
+    return count;
+  }
+  
+  public void add(int step){
+    count+=step;
+  }
+}
 
+//此类的作用实现了向应用范围内存取计数器的功能
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
+public class CounterServlet extends HttpServlet {
+  public void doGet(HttpServletRequest request,
+    HttpServletResponse response)throws ServletException, IOException {
 
+    //获得ServletContext的引用
+    ServletContext context = getServletContext();
 
+    // 从ServletContext中读取counter属性
+    Counter counter = (Counter)context.getAttribute("counter");
 
+    // 如果ServletContext中没有counter属性，就创建counter属性
+    if ( counter == null ) {
+      counter = new Counter(1);
+      context.setAttribute("counter", counter);
+    }
+    
+    response.setContentType("text/html;charset=GB2312");
+    PrintWriter out = response.getWriter();
+    out.println("<html><head><title>CounterServlet</TITLE></head>");
+    out.println("<body>");
+    // 输出当前的counter属性
+    out.println("<h1>欢迎光临本站。您是第 " + counter.getCount()+" 位访问者。</h1>");
+    out.println("</body></html>");
+  
+    //将计数器递增1   
+    counter.add(1);
+    out.close();
+  }
+}
+```
+## 使用ServletContextListener监听器*
+当web应用启动时，Servlet容器先调用MyServletContextListener的contextInitialized()方法，再调用lifeInit的init()方法；当web引用终止时，Servlet容器先调用lifeInit的destroy()方法，再调用MyServletListener的contextDestoryed()方法。
 
-
-
-
-
-
-
-
-
-
-
-# 四、Servlet的服务方法
+由此可见，在web应用的生命周期中，ServletContext对象是最早被创建，最晚被销毁。
+# 四、Servlet的服务方法抛出异常
 Servlet接口的service()方法完整定义如下：
 ```java
 public void service(ServletRequest req,ServletResponse res)throws ServletException,java.io.IOException
