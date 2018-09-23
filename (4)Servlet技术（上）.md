@@ -353,6 +353,29 @@ public class LifeServlet extends GenericServlet{
 ```
 # 三、ServletContext与Web应用范围
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # 四、Servlet的服务方法
 
 # 五、防止页面被客户端访问
+浏览器端的缓存技术适用于保存服务器端的静态网页，以及不包含敏感数据的网页；当网页包含随时更新的动态内容和敏感数据，服务器不希望网页被客户端缓存。
+服务器端的HttpServlet可以通过设置特定HTTP响应头来禁止客户端缓存网页，以下示范代码的response变量引用HttpServletResonse对象;
+```java
+response.addHeader("Pragma","no-cache");   //适用于HTTP1.0浏览器；
+response.addHeader("Cache-Control","no-cache");//Cache-Control用来决定客户端是否可以缓存网页，no-cache的意思是不会把网页缓存到本地缓存中；
+response.addHeader("Expires","0");//Expires选项用于设定网页过期的 时间，0表示立刻过期；
+```
