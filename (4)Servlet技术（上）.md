@@ -1,16 +1,16 @@
 <!-- GFM-TOC -->
-* [一、Servlet&nbsp;API](*servlet&nbsp;api)
+* [一、Servlet&nbsp;API](*一servlet&nbsp;api)
     * [Servlet&nbsp;API ](*servlet&nbsp;api)
-* [二、Servlet的生命周期](*servlet的生命周期)
+* [二、Servlet的生命周期](*二servlet的生命周期)
     * [初始化阶段](*初始化阶段)
     * [运行时阶段](*运行时阶段)
     * [销毁阶段](*销毁阶段)
     * [演示Servlet的生命周期的范例](*演示servlet的生命周期的范例)
-* [三、ServletContext与Web应用范围](*servletcontext与web应用范围)
+* [三、ServletContext与Web应用范围](*三servletcontext与web应用范围)
     * [在web应用范围内存放共享数据的范例](*在web应用范围内存放共享数据的范例)
     * [使用ServletContextListener监听器*](*使用servletcontextlistener监听器*)
-* [四、Servlet的服务方法抛出异常](*servlet的服务方法抛出异常)
-* [五、防止页面被客户端访问](*防止页面被客户端访问)
+* [四、Servlet的服务方法抛出异常](*四servlet的服务方法抛出异常)
+* [五、防止页面被客户端访问](*五防止页面被客户端访问)
 <!-- GFM-TOC -->
 # 一、Servlet API
 servlet是用java语言编写出来的类，可编写出能完成复杂任务的Servlet类。
