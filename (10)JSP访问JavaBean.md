@@ -146,13 +146,42 @@ catalog.jsp中如果对某本书选择“加入购物车”链接，catalog.jsp�
     }
 ```
 ### showcart.jsp访问ShoppingCart
+showcart.jsp从ShoppingCart对象中读取所有的ShoppingCartItem对象，然后从ShoppingCartItem对象中读取BookDetails对象，并且将这些数据输出到网页上。
+如果客户在showcart.jsp网页上选择“删除”链接就会执行如下操作：
+```java
+    String bookId = request.getParameter("Remove");
+    if(bookId !=null){
+        cart.remove(bookId);     //从购物车中删除一本书
+        BookDetails book = bookDB.getBookDetails(bookId);
+    }
+```
 
+### casher.jsp访问ShoppingCart
+casher.jsp从ShoppingCart对象中获取客户购买书的总数量和总金额，然后输出到网页上，此外还提供了让客户输入银行卡账号的 表单。
+```java
+    <p>你一共购买了<%=cart.getNumberOfItems()%>本书<p>
+    <p>你应支付的金额<%=cart.getTotal()%>元<p>
+```
+```java
+<%@ page contentType="text/html;charset=GB2312" %>
+<%@ include= file="coommon.jsp" %>
+<%@ page import="java.util" %>
 
-
-
-
-
-
+<html><head><title>TitleCashier</title></head>
+<%@ include file="banner.jsp" %>
+    <p>你一共购买了<%=cart.getNumberOfItems()%>本书<p>
+    <p>你应支付的金额<%=cart.getTotal()%>元<p>
+```
+### receipt.jsp访问ShoppingCart
+receipt.jsp把ShoppingCart对象作为参数传给BookDB对象的buyBooks()方法：
+```java
+    <jsp:useBean id="cart" scope="session" class="mypack.ShoppingCart" /?
+    <%
+        bookDB.buyBooks(cart);
+        session.invalidate();
+    %>
+```
+# 小结
 
 
 
