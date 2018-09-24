@@ -182,22 +182,12 @@ receipt.jsp把ShoppingCart对象作为参数传给BookDB对象的buyBooks()方�
     %>
 ```
 # 小结
+JavaBean常常用来作为被Web应用中的多个Web组件共享的数据。在web应用中，如果某种数据需要被多个web组件共享，可以把这些共享数据存放在特定的范围内；Servlet规范规定了四种范围：
 
+页面（page）范围;共享数据的有效范围是用户当前访问的JSP网页；
 
+请求（request）范围;有效范围是用户请求访问的当前web组件，以及和当前web组件共享同一个用户请求的其他web组件；
 
+会话（session）范围：共享数据共存于整个HTTP会话范围的生命周期内，同一个HTTP会话中的web组件共享它；会话范围内的共享数据实际上存放在HttpSession对象中；
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Web应用（application）的范围;共享数据存在于整个web应用的生命周期内，web应用中的所有web组件都能共享它；
