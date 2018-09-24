@@ -68,15 +68,107 @@ scope属性：用来指定JavaBean对象的存放范围，可选择包括page(�
     }
 ```
 ## 访问JavaBean属性
+JSP提供了访问JavaBean属性的标签，要将JavaBean的某个属性输出到网页上，可用<jsp:getProperty>标签：
+```java
+    <jsp:getProperty name="myBean" property="count"/>
+```
+以上<jsp:getProperty>标签根据name属性的值"myBean"找到<jsp:useBean>标签声明的ID为“myBean”的CountBean对象，然后打印它的属性。等价于以下java程序片段
+```java
+    <%=myBean.getCount() %>
+```
+Servlet容器在运行<jsp:getProperty>标签时，会根据property属性指定的属性名，自动调用JavaBean的相应的get方法。
 
 
-
-
-
-
-
+如果想要给JavaBean的某个属性赋值，可以用<jsp:setProperty>标签：
+```java
+    <jsp:setProperty name="myBean" property="count" value="1" />
+```
+以上<jsp:setProperty>标签根据name属性的值"myBean",找到由<jsp:useBean>标签声明的ID位"myBean"的CounterBean对象，然后给它的count属性赋值；以上<jsp:setProperty>标签等价于以下代码：
+```java
+    <% myBean.setCount(1);%>
+```
 # 三、Java的范围
+在<jsp:useBean>标签中可以设置JavaBean的scope属性，scope属性决定了JavaBean对象存在的范围。scope属性的默认值;scope的可选值包括以下几种：
+
+page：是scope属性的默认值；
+
+request:表示请求范围；
+
+session：表示会话范围；
+
+application：表示web应用范围；
+
+
+
+
 
 # 四、在bookstore应用中访问
+bookstore应用创建了两个JavaBean:BookDB类和ShoppingCart类；
+## 访问BookDB类
+BookDB类负责访问数据库、查询BOOKS表的数据以及购书事务；在common.jsp中声明了一个类型为BookDB类的JavaBean：
+```java
+    <jsp:useBean id="bookDB" scope="application" class="mypack.BookDB" />
+```
+以上<jsp:useBean>标签的scope属性为"application"，这意味着在整个web应用范围内只有一个名为"bookDB"的BookDB对象，所有通过<%@ include>指令包含了common.jsp的其他JSP文件都可以访问这个BookDB对象。
+
+由于<jsp:useBean>标签会定义一个引用BookDB对象的bookDB局部变量，因此在JSP文件的java程序片段中可以直接通过bookDB局部变量来引用BookDB对象。
+```java    //示例如下
+<%@ page contentType="text/html;charset=GB2312" %>
+<%@ include= file="coommon.jsp" %>
+<%@ page import="java.util" %>
+
+<html><head><title>TitleBookDescription</title></head>
+<%@ include file="banner.jsp" %>
+<br>
+
+<%
+//读取bookID
+String bookID=request.getParameter("bookId");
+if(bookId=null) bookId="201";
+BookDetails book=bookDB.getBookDetails(bookId);
+%>
+.....
+```
+## 访问ShoppingCart类
+ShoppingCart类代表了虚拟的购物车；在catalog.jsp、showcart.jsp、casher.jsp和receipt.jsp中均访问ShoppingCart对象；以下是声明ShoppingCart对象的代码：
+```java
+    <jsp:useBean id="cart" scope="session" class="mypack.ShoppingCart"/>
+```
+bookstore应用中的会话代表了客户的一次购物活动，从选购书开始，到付账结束。ShoppingCart对象保存在会话中，可以用来跟踪客户的购书信息。当客户付账时，服务端就可以根据ShoppingCart对象中的信息来计算客户应支付的金额；
+### catalog.jsp访问ShoppingCart
+catalog.jsp中如果对某本书选择“加入购物车”链接，catalog.jsp就会把这本书的信息加入到该客户的会话范围内的ShoppongCart对象中;
+```java
+    //向购物车内加入一本书
+    String bookId = request.getParameter("Add");
+    if(bookId!=null){
+        BookDetails book = bookDB.getBookDetails(bookId);
+        cart.add(bookId,book);
+    }
+```
+### showcart.jsp访问ShoppingCart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
