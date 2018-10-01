@@ -1,3 +1,15 @@
+<!-- GFM-TOC -->
+* [一、JavaBean简介](#一javabean简介)
+* [二、JSP访问JavaBean的语法](#二jsp访问javabean的语法)
+    * [导入JavaBean类](#导入javabean类)
+    * [声明JavaBean对象](#声明javabean对象)
+    * [访问JavaBean属性](#访问javabean属性)
+* [三、Java的范围](#三java的范围)
+* [四、在bookstore应用中访问](#四在bookstore应用中访问)
+    * [访问BookDB类](#访问bookdb类)
+    * [访问ShoppingCart类](#访问shoppingcart类)
+* [小结](#小结)
+<!-- GFM-TOC -->
 # 一、JavaBean简介
 JavaBean是一种可重复使用的且跨平台的软件组织；JavaBean可分为两种：一种是有用户界面，还有一种没有用户界面，注意负责表示业务数据或者处理事务（如数据运算、操纵数据库）的JavaBean；JSP常访问的是后一种JavaBean。
 
