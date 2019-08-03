@@ -101,6 +101,7 @@ public class TestServlet extends HttpServlet {
 ### Get方法与Post方法的区别：
 #### 传输方式
 HTTP header&HTTP boby
+
 URL可见&URL不可见
 #### 设计目的：
 获取数据&发送数据
