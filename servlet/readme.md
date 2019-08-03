@@ -734,20 +734,27 @@ JSP=Html+Java+JSP tag
 表达式元素中可以包含任何符合Java语言规范的表达式，但是不能使用分号来结束表达式。
 <%=表达式 %>
 <p>Today`s date:<%=(new java.util.Date()).toLocaleString()%></p>
+	
 #### JSP脚本
 脚本程序可以包含任意量的Java语句、变量、方法或表达式。
 <% 代码片段%>
+	
 #### JSP注释
 JSP注释主要为代码作注释以及将某段代码注释掉
 <%-- ---%>
 ### JSP指令
+	
 #### page指令
 定义页面的依赖属性，比如脚本语言、error页面、缓存需求等等。
+	
 #### Include指令
 --包含其它文件
+	
 #### taglib指令
 --引入标签库的定义
+	
 ### JSP内置对象
 rquest(HttpServletRequest类的实例)/response（HttpSevletResponse类的实例）/out（PrintWriter类的实例，用于把结果输出到网页上）/session（HttpSession类的实例）/application（ServletContext类的实例，与应用上下文有关）/config（ServletConfig类的实例）
+	
 #### JSP独有的对象
 Page(类似于Java类中this关键字)/pageContext（PageContext类的实例，提供对JSP页面所有对象以及命名空间的访问）/Exception（Exception类的对象，代表发生错误的JSP页面中对应的异常对象）
