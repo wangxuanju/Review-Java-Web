@@ -36,6 +36,10 @@ public class UserServlet extends HttpServlet {
 		String userName = request.getParameter("userName");
 		String userPassword = request.getParameter("userPassword");
 
+		
+		
+		
+		
 		HttpSession session = request.getSession();
 		String name = (String) session.getAttribute("userName");
 
@@ -45,6 +49,10 @@ public class UserServlet extends HttpServlet {
 
 		session.setAttribute("userName", userName);
 
+		
+		
+	
+		
 		Cookie userNameCookie = new Cookie("userName", userName);
 		Cookie pwdCookie = new Cookie("pwd", userPassword);
 
