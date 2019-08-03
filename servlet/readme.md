@@ -55,7 +55,8 @@ http://localhost:8080/web_project_template/hello
 ### Servlet的生命周期：
 初始化（init方法）：一般在Servlet第一次请求才创建（整个Servlet生命周期中调用一次）
 
-请求处理（service方法）：
+请求处理（service方法）
+
 销毁（destroy方法）：在Servlet销毁之前调用
 ```java
 import java.io.IOException;
