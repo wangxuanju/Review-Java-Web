@@ -212,6 +212,14 @@ Servlet初始化过程中，<init-param>参数将被封装到ServletConfig
 		<param-name>globalData2</param-name>
 		<param-value>345</param-value>
 	</context-param>
+	<servlet>
+		<servlet-name>ServletContextServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.ServletContextServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServletContextServlet</servlet-name>
+		<url-pattern>/servlet/ServletContext</url-pattern>
+	</servlet-mapping>
 ```
 ServletContext
 
