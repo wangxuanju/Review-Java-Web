@@ -319,12 +319,13 @@ Web.xml文件称为部署描述符
 
 
 如果需要在Servlet容器启动时执行操作？
+```java
 <servlet>
     <load-on-startup>0</load-on-startup>//load-on-startup改变servlet默认初始时间
 <servlet-name>ServletCtx</servlet-name>
 <servlet-class>com.netease.example.ContextServlet</servlet-class>
 </servlet>
-
+```
 
 ### Cookie&Session
 #### Cookie
