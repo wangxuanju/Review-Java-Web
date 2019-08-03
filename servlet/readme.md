@@ -2,7 +2,7 @@
 一个Servlet就是一个Java类，并提供基于请求-响应模式的web服务。
 
 ## Servlet和Servlet容器的关系：
-Servlet只有在Servlet中才能发挥作用。
+Servlet只有在Servlet容器中才能发挥作用。
 ### Servlet容器：
 装载和管理Servlet（创建、执行和销毁）
 
