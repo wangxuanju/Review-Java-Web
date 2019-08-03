@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+  xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+  
+	<servlet>
+		<servlet-name>TestServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.TestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TestServlet</servlet-name>
+		<url-pattern>/hello</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- get/post method servlet -->
+	<servlet>
+		<servlet-name>GetPostServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.GetPostServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetPostServlet</servlet-name>
+		<url-pattern>/servlet/GetPostServlet</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- servletconfig servlet -->
+	<servlet>
+		<init-param>
+			<param-name>data1</param-name>
+			<param-value>value1</param-value>
+		</init-param>
+		<init-param>
+			<param-name>data2</param-name>
+			<param-value>value2</param-value>
+		</init-param>
+		<servlet-name>ServletConfigServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.ServletConfigServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServletConfigServlet</servlet-name>
+		<url-pattern>/servlet/ServletConfig</url-pattern>
+	</servlet-mapping>
+
+
+	<!-- servletcontext servlet -->
+	<context-param>
+		<param-name>globalData1</param-name>
+		<param-value>123</param-value>
+	</context-param>
+	<context-param>
+		<param-name>globalData2</param-name>
+		<param-value>345</param-value>
+	</context-param>
+	<servlet>
+		<servlet-name>ServletContextServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.ServletContextServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ServletContextServlet</servlet-name>
+		<url-pattern>/servlet/ServletContext</url-pattern>
+	</servlet-mapping>
+</web-app>
