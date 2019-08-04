@@ -190,8 +190,6 @@ Statement
 --clearBatch()
 
 ```java
-package com.how2java.test;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
