@@ -1,3 +1,4 @@
+//游标的方式读取数据库表
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
