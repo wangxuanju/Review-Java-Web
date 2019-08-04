@@ -156,13 +156,13 @@ try {
               //1.加载数据库驱动
               class.forName(JDBC_DRIVER);
               //2.获取数据库连接
-			conn = DriverManager.getConnection(DB_URL,USER,PASS);
+	      conn = DriverManager.getConnection(DB_URL,USER,PASS);
               //3.创建PreparementStatement对象
-			String sql = “select * from user_note”;
-			ptmt = conn.prepareStatement(sql);
+	      String sql = “select * from user_note”;
+	      ptmt = conn.prepareStatement(sql);
               //4.执行SQL
-			rs = ptmt.executeQuery();
-			while(rs.next()) { 
+	      rs = ptmt.executeQuery();
+	      while(rs.next()) { 
 
 //5.获取对象流
 InputSteam in = rs.getBinaryStream(“blog”);
@@ -172,11 +172,11 @@ OutputStream out = null;
 out = new FileOutputStream(f);
 int temp = 0;
 While((temp = in.read())!=-1){ //边读边写
-                  out.write(temp);
-			}	
-in.close();    
-out.close();
-		} catch (SQLException e) {
+      out.write(temp);
+     }	
+     in.close();    
+     out.close();
+     } catch (SQLException e) {
 ```
 ### 业务场景四：海量数据插入操作
 批处理——发送一次SQL插入多条数据
