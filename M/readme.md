@@ -66,40 +66,49 @@ URL可见&URL不可见
 
 
 ## Cookie&Session
-Cookie
+### Cookie
 会话数据保存在客户端（Key-Value形式数据）
-Session
+### Session
 会话数据保存在服务器端
-Cookie生命周期：
+### Cookie生命周期：
 默认结束后失效 setMaxAge设置cookie有效期
-Cookie缺陷：
+### Cookie缺陷：
 大小和数量的限制
 数据安全性的问题
-Session
+### Session
 HttpSession
-Session生命周期
+### Session生命周期
 默认有效期30分钟
+
 setMaxInactiveInterval设置有效期(设置接口的方式或设置描述符的方式来设置有效期，前者优先级大于后者)
+
 部署描述符配置有效期
+
 invalidate使Session失效
-Cookie&Session
+## Cookie&Session
 数据存储：Cookie存客户端，Session存服务端；
+
 使用安全：Cookie以明文方式存在客户端，安全性较弱，但是可以使用加密方式再进行存放；Session存在服务器端内存中安全性相对较强。
+
 生命周期：Cookie的生命周期是累积时间的，到点失效，通过setMaxAge来设置有效期；Session的生命周期是间隔时间的，从最后一次访问开始计时，可以直接调用API使其失效。
+
 使用原则：Cookie是有限制的，每个站点是20个Cookie,每个cookie大小4k以内；Session存放在服务器端，建议不要在Session中存过多过大的对象。
-转发和重定向的区别:
-重定向
+### 转发和重定向的区别:
+#### 重定向
 response.sendRedirect(String path); -- 完成重定向
-转发
+#### 转发
 request.getRequestDispatcher(String path).forward(request,response);
-区别
+#### 区别
 1.转发的地址栏不变的.重定向的地址栏发生变化的.
+
 2.转发是一次请求一次响应,重定向是两次请求两次响应.
+
 3.request 域对象存取的值在转发中是有效的,在重定向无效的.
+
 4.转发的路径不需要加工程名.重定向的路径需要加工程名.
 
 
-转发和重定向区别?
+### 转发和重定向区别?
 * 转发是一次请求一次响应,重定向两次请求和两次响应.
 * 转发地址栏不变,重定向会变化.
 * 转发的路径不需要加工程名,重定向需要加工程名.
