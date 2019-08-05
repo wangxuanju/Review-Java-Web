@@ -29,11 +29,45 @@
 # Servlet
 ## 什么是 Servlet:
 * 就是一个运行在 WEB 服务器上的小的 Java 程序,用来接收和响应从客户端发送过来的请求,通常使用 HTTP协议.
+* 一个Servlet就是一个Java类，并提供基于请求-响应模式的web服务。
+* Servlet就是一个服务端程序（负责把请求转发给Servlet，交由Servlet处理，处理完之后，由Servlet容器将结果返回给客户端）；
 * Servlet 就是 SUN 公司提供的一个动态网页开发技术.
-
-
 ## 编写一个类继承 HttpServlet，重写 doGet 和 doPost 方法.
+```java
+public class TestServlet extends HttpServlet {
 
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		System.out.println("service method");
+		super.service(req, resp);
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		System.out.println("doGet method");
+		PrintWriter pw = resp.getWriter();
+		pw.print("/hello");
+		pw.close();
+	}
+
+}
+
+//web.xml中配置文件
+<servlet>
+		<servlet-name>TestServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.TestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>TestServlet</servlet-name>
+		<url-pattern>/hello</url-pattern>//映射出去的路径
+	</servlet-mapping>
+
+```
+http://localhost:8080/web_project_template/hello
+浏览器中URL地址——Servlet容器根据URL地址通过配置文件web.xml找到对应的Servlet，同时将请求转发给Servlet对应的service方法。每当一个客户端请求httpServlet对象的时候，该对象service方法被调用，传给这个方法一个HttpServletRquest和HttpServletResponse对象作为参数。
+（由于我们使用的是HTTP get方法访问的Servlet，service就会调用doGet方法处理（post方法的使用同理）。最后我们在doGet方法里通过HttpServletResponse对象把hello word返回给客户端。）
 
 
 ## Servlet 生命周期:Servlet 从创建到销毁的过程.
@@ -45,8 +79,106 @@
 
 ## Servlet 的生命周期：
 * 第一次访问 Servlet 的时候,服务器创建一个 Servlet 的对象.init 方法就会执行.任何一次请求服务器都会创建一个新的线程执行service方法.service的方法内部根据请求方式调用doXXX方法.当服务器关闭的时候,servlet 就会被销毁.destroy 方法就会执行.
+```java
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class TestServlet extends HttpServlet {
 
+    @Override
+	public void destroy() throws ServletException {
+		System.out.println("destroy method");
+	}
 
+	@Override
+	public void init() throws ServletException {
+		System.out.println("init method");
+	}
+
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		System.out.println("service method");
+		super.service(req, resp);
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		System.out.println("doGet method");
+		PrintWriter pw = resp.getWriter();
+		pw.print("/hello");
+		pw.close();
+	}
+}
+```
+#### ServletConfig
+```java
+<!-- servletconfig servlet -->
+	<servlet>
+		<init-param>
+			<param-name>data1</param-name>
+			<param-value>value1</param-value>
+		</init-param>
+		<init-param>
+			<param-name>data2</param-name>
+			<param-value>value2</param-value>
+		</init-param>
+		<servlet-name>ServletConfigServlet</servlet-name>
+		<servlet-class>com.netease.server.example.web.controller.ServletConfigServlet</servlet-class>
+	</servlet>
+```
+#### ServletContext
+```java
+<!-- servletcontext servlet -->
+	<context-param>
+		<param-name>globalData1</param-name>
+		<param-value>123</param-value>
+	</context-param>
+	<context-param>
+		<param-name>globalData2</param-name>
+		<param-value>345</param-value>
+	</context-param>
+  //通过配置文件共享全局配置信息,通过ServletContext属性实现不同Servlet之间的通信
+```
+```java
+public class ServletConfigServlet extends HttpServlet {
+
+	@Override
+	public void init() throws ServletException {
+		ServletConfig config = this.getServletConfig();
+		String v1 = config.getInitParameter("data1");
+		System.out.println("v1: " + v1);
+		String v2 = config.getInitParameter("data2");
+		System.out.println("v2: " + v2);
+
+		ServletContext ctx = this.getServletContext();
+		String globalValue1 = ctx.getInitParameter("globalData1");
+		String globalValue2 = ctx.getInitParameter("globalData2");
+		System.out.println("global value1: " + globalValue1
+				+ ", global value2: " + globalValue2);
+
+		String attribute = (String) ctx.getAttribute("attribute1");
+		System.out.println("attribute: " + attribute);
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		PrintWriter pw = resp.getWriter();
+		pw.print("ServletConfig test");
+		pw.close();
+	}
+
+	@Override
+	public void destroy() {
+		super.destroy();
+	}
+}
+```
 ## Get方法与Post方法的区别：
 ### 传输方式
 HTTP header&HTTP boby
@@ -136,6 +268,7 @@ request.getRequestDispatcher(String path).forward(request,response);
 
   JSP 中 中 page  指令:<%@ page %> --  设置 JSP  
 ## JSP 9大内置对象
+request/response/session/application/page/config/out/exception/pageContext
 
 
 
