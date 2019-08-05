@@ -225,11 +225,99 @@ invalidate使Session失效
 生命周期：Cookie的生命周期是累积时间的，到点失效，通过setMaxAge来设置有效期；Session的生命周期是间隔时间的，从最后一次访问开始计时，可以直接调用API使其失效。
 
 使用原则：Cookie是有限制的，每个站点是20个Cookie,每个cookie大小4k以内；Session存放在服务器端，建议不要在Session中存过多过大的对象。
+```java
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.apache.log4j.Logger;
+
+public class UserServlet extends HttpServlet {
+	@Override
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/html;charset=UTF-8");
+		process(request, response);
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		logger.info("UserServlet post method is invoked.");
+		response.setContentType("text/html;charset=UTF-8");
+		process(request, response);
+	}
+
+	protected void process(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher dispatcher = null;
+		String userName = request.getParameter("userName");
+		String userPassword = request.getParameter("userPassword");
+
+		HttpSession session = request.getSession();
+		String name = (String) session.getAttribute("userName");
+
+		if (name != null) {
+			System.out.println("second login: " + name);
+		}
+
+		session.setAttribute("userName", userName);
+
+		Cookie userNameCookie = new Cookie("userName", userName);
+		Cookie pwdCookie = new Cookie("pwd", userPassword);
+
+		userNameCookie.setMaxAge(10 * 60);
+		pwdCookie.setMaxAge(10 * 60);
+
+		response.addCookie(userNameCookie);
+		response.addCookie(pwdCookie);
+
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("userName")) {
+					userName = cookie.getValue();
+				}
+				if (cookie.getName().equals("pwd")) {
+					userPassword = cookie.getValue();
+				}
+			}
+		}
+
+		try {
+			if (userName.equals("123") && userPassword.equals("123")) {
+				PrintWriter writer = response.getWriter();
+				writer.println("<html>");
+				writer.println("<head><title>用户中心</title></head>");
+				writer.println("<body>");
+				writer.println("<p>用户名：" + userName + "</p>");
+				writer.println("<p>用户密码：" + userPassword + "</p>");
+				writer.println("</body>");
+				writer.println("</html>");
+				writer.close();
+			} else {
+				dispatcher = request.getRequestDispatcher("/error.html");
+				dispatcher.forward(request, response);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			dispatcher = request.getRequestDispatcher("/error.html");
+			dispatcher.forward(request, response);
+		}
+
+	}
+}
+```
 ### 转发和重定向的区别:
-#### 重定向
-response.sendRedirect(String path); -- 完成重定向
 #### 转发
 request.getRequestDispatcher(String path).forward(request,response);
+#### 重定向
+response.sendRedirect(String path); -- 完成重定向
 #### 区别
 1.转发的地址栏不变的.重定向的地址栏发生变化的.
 
@@ -245,7 +333,52 @@ request.getRequestDispatcher(String path).forward(request,response);
 * 转发地址栏不变,重定向会变化.
 * 转发的路径不需要加工程名,重定向需要加工程名.
 * 转发只能在本网站内部,重定向可以定向到任何网站.
+```java
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+public class ServletForward extends HttpServlet {
+
+	@Override
+	public void init() throws ServletException {
+		System.out.println("init method");
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		RequestDispatcher rd = req.getRequestDispatcher("/forwardExample");
+		rd = this.getServletContext().getNamedDispatcher(
+				"ServletForwardExample");
+		rd = this.getServletContext().getRequestDispatcher("/forwardExample");
+		rd.forward(req, resp);
+	}
+}
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class ServletRedirect extends HttpServlet {
+	
+	@Override
+	public void init() throws ServletException {
+		System.out.println("init method");
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		resp.sendRedirect("redirectExample");
+	}
+}
+```
 
 # 什么是 JSP：
 * Java Server Pages（Java 服务器端的页面）
